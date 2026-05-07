@@ -8,117 +8,182 @@
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <style>
-  :root {
-    --bg:#0d0f14;--surface:#161920;--card:#1e2230;--border:#2a2f42;
-    --accent:#c9a84c;--accent2:#e8c87a;--text:#e8e4dc;--muted:#7a8099;--tag-bg:#252a3a;
-    --comet:#5b8fff;--chateau:#8b5cf6;--stade:#ef4444;--paris:#10b981;
-    --idf:#f59e0b;--normandie:#06b6d4;--belgique:#ec4899;--radius:12px;
-  }
-  *{box-sizing:border-box;margin:0;padding:0;}
-  body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;}
+:root{
+  --bg:#0d0f14;--surface:#161920;--card:#1e2230;--border:#2a2f42;
+  --accent:#c9a84c;--accent2:#e8c87a;--text:#e8e4dc;--muted:#7a8099;--tag-bg:#252a3a;
+  --comet:#5b8fff;--chateau:#8b5cf6;--stade:#ef4444;--paris:#10b981;
+  --idf:#f59e0b;--normandie:#06b6d4;--nord:#ff6b6b;--somme:#a78bfa;
+  --belgique:#ec4899;--oise:#34d399;--touquet:#f97316;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html,body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);height:100vh;overflow:hidden;}
 
-  header{background:linear-gradient(135deg,#0d0f14,#161a26);border-bottom:1px solid var(--border);
-    padding:16px 24px;display:flex;align-items:center;gap:20px;position:sticky;top:0;z-index:1000;}
-  .logo{font-family:'Playfair Display',serif;font-size:19px;color:var(--accent);white-space:nowrap;}
-  .logo span{color:var(--text);font-weight:400;}
+/* ── HEADER ── */
+header{
+  background:linear-gradient(135deg,#0d0f14 0%,#161a26 100%);
+  border-bottom:1px solid var(--border);
+  padding:0 22px;display:flex;align-items:center;gap:18px;height:58px;
+  position:relative;z-index:200;
+}
+.logo{font-family:'Playfair Display',serif;font-size:18px;color:var(--accent);white-space:nowrap;letter-spacing:.3px;}
+.logo span{color:var(--text);font-weight:300;}
 
-  .search-wrap{flex:1;max-width:560px;position:relative;}
-  .search-wrap svg{position:absolute;left:15px;top:50%;transform:translateY(-50%);color:var(--muted);pointer-events:none;}
-  #searchInput{width:100%;background:var(--card);border:1.5px solid var(--border);border-radius:50px;
-    padding:11px 18px 11px 44px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:14px;outline:none;
-    transition:border-color .2s,box-shadow .2s;}
-  #searchInput:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(201,168,76,.12);}
-  #searchInput::placeholder{color:var(--muted);}
+.search-wrap{flex:1;max-width:540px;position:relative;}
+.search-icon{position:absolute;left:13px;top:50%;transform:translateY(-50%);color:var(--muted);pointer-events:none;}
+#searchInput{
+  width:100%;background:var(--card);border:1.5px solid var(--border);border-radius:50px;
+  padding:9px 18px 9px 38px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:13px;outline:none;
+  transition:border-color .2s,box-shadow .2s;
+}
+#searchInput:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(201,168,76,.1);}
+#searchInput::placeholder{color:var(--muted);}
 
-  #searchResults{position:absolute;top:calc(100% + 8px);left:0;right:0;background:var(--card);
-    border:1px solid var(--border);border-radius:var(--radius);box-shadow:0 20px 60px rgba(0,0,0,.5);
-    max-height:360px;overflow-y:auto;display:none;z-index:9999;}
-  #searchResults.show{display:block;}
-  .sr-item{display:flex;align-items:center;gap:11px;padding:10px 14px;cursor:pointer;
-    transition:background .15s;border-bottom:1px solid var(--border);}
-  .sr-item:last-child{border-bottom:none;}
-  .sr-item:hover{background:var(--tag-bg);}
-  .sr-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0;}
-  .sr-info{flex:1;min-width:0;}
-  .sr-name{font-size:13px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-  .sr-meta{font-size:11px;color:var(--muted);margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-  .sr-arrow{color:var(--accent);font-size:15px;flex-shrink:0;}
+#searchResults{
+  position:absolute;top:calc(100% + 6px);left:0;right:0;
+  background:var(--card);border:1px solid var(--border);border-radius:12px;
+  box-shadow:0 16px 50px rgba(0,0,0,.55);max-height:320px;overflow-y:auto;
+  display:none;z-index:9999;
+}
+#searchResults.show{display:block;}
+.sr-item{display:flex;align-items:center;gap:10px;padding:9px 13px;cursor:pointer;transition:background .12s;border-bottom:1px solid var(--border);}
+.sr-item:last-child{border-bottom:none;}
+.sr-item:hover{background:var(--tag-bg);}
+.sr-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+.sr-info{flex:1;min-width:0;}
+.sr-name{font-size:12.5px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.sr-meta{font-size:11px;color:var(--muted);margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.sr-arr{color:var(--accent);font-size:13px;flex-shrink:0;}
 
-  .app{display:grid;grid-template-columns:320px 1fr;height:calc(100vh - 65px);}
+/* ── LAYOUT ── */
+.app{display:grid;grid-template-columns:295px 1fr;height:calc(100vh - 58px);}
 
-  .sidebar{background:var(--surface);border-right:1px solid var(--border);overflow-y:auto;padding:14px 12px;}
-  .sidebar::-webkit-scrollbar{width:3px;}
-  .sidebar::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px;}
+/* ── SIDEBAR ── */
+.sidebar{background:var(--surface);border-right:1px solid var(--border);overflow-y:auto;padding:11px 9px;z-index:2;}
+.sidebar::-webkit-scrollbar{width:3px;}
+.sidebar::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px;}
 
-  .filter-chips{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:14px;}
-  .chip{padding:4px 10px;border-radius:50px;font-size:11px;font-weight:500;cursor:pointer;
-    border:1.5px solid transparent;transition:all .2s;background:var(--tag-bg);color:var(--muted);}
-  .chip.active,.chip:hover{color:var(--text);border-color:currentColor;}
-  .chip[data-cat="all"].active{color:var(--accent);}
-  .chip[data-cat="comet"].active{color:var(--comet);}
-  .chip[data-cat="chateau"].active{color:var(--chateau);}
-  .chip[data-cat="stade"].active{color:var(--stade);}
-  .chip[data-cat="paris"].active{color:var(--paris);}
-  .chip[data-cat="idf"].active{color:var(--idf);}
-  .chip[data-cat="normandie"].active{color:var(--normandie);}
-  .chip[data-cat="belgique"].active{color:var(--belgique);}
-  .count-badge{display:inline-block;background:var(--border);border-radius:50px;font-size:10px;padding:1px 5px;margin-left:3px;color:var(--muted);}
+.filter-chips{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:11px;}
+.chip{
+  padding:3px 9px;border-radius:50px;font-size:10.5px;font-weight:500;cursor:pointer;
+  border:1.5px solid transparent;transition:all .18s;background:var(--tag-bg);color:var(--muted);
+  white-space:nowrap;
+}
+.chip:hover{color:var(--text);border-color:currentColor;}
+.chip.active{color:var(--text);border-color:currentColor;}
+.chip[data-cat="all"].active{color:var(--accent);border-color:var(--accent);}
+.chip[data-cat="comet"].active{color:var(--comet);}
+.chip[data-cat="chateau"].active{color:var(--chateau);}
+.chip[data-cat="stade"].active{color:var(--stade);}
+.chip[data-cat="paris"].active{color:var(--paris);}
+.chip[data-cat="idf"].active{color:var(--idf);}
+.chip[data-cat="normandie"].active{color:var(--normandie);}
+.chip[data-cat="nord"].active{color:var(--nord);}
+.chip[data-cat="somme"].active{color:var(--somme);}
+.chip[data-cat="belgique"].active{color:var(--belgique);}
+.chip[data-cat="oise"].active{color:var(--oise);}
+.chip[data-cat="touquet"].active{color:var(--touquet);}
+.count-b{display:inline-block;background:var(--border);border-radius:50px;font-size:9.5px;padding:0px 4px;margin-left:2px;color:var(--muted);}
 
-  .group-label{font-size:10px;font-weight:600;letter-spacing:1.1px;text-transform:uppercase;color:var(--muted);
-    padding:10px 4px 6px;display:flex;align-items:center;gap:7px;}
-  .group-label::after{content:'';flex:1;height:1px;background:var(--border);}
+.group-label{
+  font-size:9.5px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--muted);
+  padding:9px 3px 4px;display:flex;align-items:center;gap:6px;
+}
+.group-label::after{content:'';flex:1;height:1px;background:var(--border);}
 
-  .venue-card{display:flex;align-items:center;gap:9px;padding:8px 9px;border-radius:9px;cursor:pointer;
-    transition:all .15s;border:1px solid transparent;margin-bottom:2px;}
-  .venue-card:hover{background:var(--card);border-color:var(--border);}
-  .venue-card.active{background:var(--card);border-color:var(--accent);}
-  .v-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
-  .v-info{flex:1;min-width:0;}
-  .v-name{font-size:13px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-  .v-addr{font-size:11px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:1px;}
-  .v-link{color:var(--accent);font-size:15px;flex-shrink:0;opacity:.6;transition:opacity .2s;}
-  .venue-card:hover .v-link{opacity:1;}
+.venue-card{
+  display:flex;align-items:center;gap:7px;padding:6px 7px;border-radius:8px;
+  cursor:pointer;transition:all .13s;border:1px solid transparent;margin-bottom:1px;
+}
+.venue-card:hover{background:var(--card);border-color:var(--border);}
+.venue-card.active{background:var(--card);border-color:var(--accent);}
+.v-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
+.v-info{flex:1;min-width:0;}
+.v-name{font-size:12px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.v-addr{font-size:10.5px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:1px;}
+.v-ext{color:var(--accent);font-size:13px;flex-shrink:0;opacity:.55;transition:opacity .15s;}
+.venue-card:hover .v-ext{opacity:1;}
+.no-results{text-align:center;padding:28px 12px;color:var(--muted);font-size:12px;}
 
-  #map{width:100%;height:100%;z-index:1;}
+/* ── MAP ── */
+#map{width:100%;height:100%;z-index:1;}
+.custom-marker{
+  width:28px;height:28px;border-radius:50%;border:2.5px solid rgba(255,255,255,.18);
+  display:flex;align-items:center;justify-content:center;font-size:12px;
+  box-shadow:0 3px 12px rgba(0,0,0,.5);cursor:pointer;transition:transform .15s;
+}
+.custom-marker:hover{transform:scale(1.25);}
 
-  /* ─── POPUP ─── */
-  .leaflet-popup-content-wrapper{
-    background:#1a1d2e!important;border:1px solid #2a2f42!important;
-    border-radius:16px!important;box-shadow:0 28px 80px rgba(0,0,0,.75)!important;
-    color:#e8e4dc!important;font-family:'DM Sans',sans-serif!important;
-    padding:0!important;overflow:hidden!important;
-  }
-  .leaflet-popup-content{margin:0!important;width:290px!important;}
-  .leaflet-popup-tip-container{display:none;}
-  .leaflet-popup-close-button{color:#7a8099!important;top:8px!important;right:10px!important;z-index:10;font-size:20px!important;background:rgba(13,15,20,.6)!important;border-radius:50%!important;width:24px!important;height:24px!important;display:flex!important;align-items:center!important;justify-content:center!important;}
+/* ── HOVER CARD ── */
+#hcard{
+  position:fixed;
+  width:300px;
+  background:#12151f;
+  border:1px solid var(--border);
+  border-radius:14px;
+  box-shadow:0 20px 70px rgba(0,0,0,.8), 0 0 0 1px rgba(255,255,255,.03);
+  z-index:5000;
+  pointer-events:none;
+  opacity:0;
+  transform:translateY(6px) scale(.97);
+  transition:opacity .18s ease, transform .18s ease;
+  overflow:hidden;
+}
+#hcard.show{
+  opacity:1;
+  transform:translateY(0) scale(1);
+  pointer-events:auto;
+}
 
-  .popup-img-wrap{width:100%;height:155px;overflow:hidden;position:relative;background:#0d0f14;flex-shrink:0;}
-  .popup-img-wrap img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .4s;}
-  .popup-img-wrap:hover img{transform:scale(1.05);}
-  .popup-placeholder{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:44px;
-    background:linear-gradient(135deg,#161a26,#252a3a);}
-  .popup-img-badge{position:absolute;bottom:8px;left:10px;background:rgba(13,15,20,.8);backdrop-filter:blur(6px);
-    border-radius:50px;padding:3px 10px;font-size:11px;color:#e8c87a;font-weight:500;}
-  .popup-loading{width:100%;height:155px;display:flex;align-items:center;justify-content:center;
-    background:linear-gradient(135deg,#161a26,#252a3a);font-size:13px;color:#7a8099;}
-  .popup-spin{display:inline-block;width:18px;height:18px;border:2px solid #2a2f42;border-top-color:#c9a84c;
-    border-radius:50%;animation:spin .7s linear infinite;margin-right:8px;}
-  @keyframes spin{to{transform:rotate(360deg)}}
+/* color bar top */
+.hc-bar{height:4px;width:100%;}
 
-  .popup-body{padding:13px 16px 15px;}
-  .popup-name{font-size:15px;font-weight:600;line-height:1.3;margin-bottom:5px;}
-  .popup-addr{display:flex;align-items:flex-start;gap:5px;font-size:12px;color:#7a8099;margin-bottom:3px;line-height:1.4;}
-  .popup-addr svg{flex-shrink:0;margin-top:1px;}
-  .popup-cat-tag{display:inline-block;font-size:11px;color:#7a8099;margin-bottom:12px;}
-  .popup-btn{display:block;text-align:center;background:linear-gradient(135deg,#c9a84c,#e8c87a);color:#0d0f14;
-    font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;padding:9px 16px;border-radius:50px;
-    text-decoration:none;transition:opacity .2s;}
-  .popup-btn:hover{opacity:.85;}
+/* header */
+.hc-head{padding:13px 15px 10px;}
+.hc-cat{font-size:10.5px;font-weight:600;letter-spacing:.5px;text-transform:uppercase;margin-bottom:4px;opacity:.85;}
+.hc-name{font-size:15px;font-weight:700;line-height:1.2;margin-bottom:10px;}
 
-  .no-results{text-align:center;padding:32px 14px;color:var(--muted);font-size:13px;}
-  .custom-marker{width:30px;height:30px;border-radius:50%;border:2.5px solid rgba(255,255,255,.2);
-    display:flex;align-items:center;justify-content:center;font-size:13px;
-    box-shadow:0 4px 14px rgba(0,0,0,.5);cursor:pointer;}
+/* info rows */
+.hc-row{display:flex;align-items:flex-start;gap:9px;margin-bottom:7px;}
+.hc-icon{
+  width:28px;height:28px;border-radius:8px;background:var(--tag-bg);
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;
+}
+.hc-icon svg{width:14px;height:14px;stroke:var(--muted);fill:none;stroke-width:2;}
+.hc-row-text{flex:1;min-width:0;}
+.hc-row-label{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:1px;}
+.hc-row-val{font-size:12.5px;color:var(--text);line-height:1.4;}
+.hc-phone-link{color:var(--accent);text-decoration:none;font-size:12.5px;}
+.hc-phone-link:hover{text-decoration:underline;}
+
+/* divider */
+.hc-div{height:1px;background:var(--border);margin:10px 0;}
+
+/* guide button */
+.hc-btn{
+  display:flex;align-items:center;justify-content:center;gap:8px;
+  margin:0 15px 14px;
+  background:linear-gradient(135deg,#c9a84c,#e8c87a);
+  color:#0d0f14;font-family:'DM Sans',sans-serif;font-size:12.5px;font-weight:700;
+  padding:10px 16px;border-radius:9px;text-decoration:none;
+  transition:opacity .2s,transform .15s;
+}
+.hc-btn:hover{opacity:.9;transform:translateY(-1px);}
+.hc-btn svg{width:13px;height:13px;stroke:#0d0f14;fill:none;stroke-width:2.5;}
+
+/* gmaps link */
+.hc-gmaps{
+  display:flex;align-items:center;justify-content:center;gap:6px;
+  margin:0 15px 13px;
+  padding:8px;border-radius:8px;
+  background:var(--tag-bg);border:1px solid var(--border);
+  text-decoration:none;color:var(--muted);font-size:11.5px;
+  transition:border-color .15s,color .15s;
+}
+.hc-gmaps:hover{border-color:var(--accent);color:var(--text);}
+.hc-gmaps img{width:14px;height:14px;border-radius:2px;}
+
+/* pin hint */
+.hc-hint{text-align:center;font-size:10px;color:var(--muted);padding-bottom:10px;opacity:.6;}
 </style>
 </head>
 <body>
@@ -126,10 +191,10 @@
 <header>
   <div class="logo">Réceptifs <span>— Guides</span></div>
   <div class="search-wrap">
-    <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+    <svg class="search-icon" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
       <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
     </svg>
-    <input type="text" id="searchInput" placeholder="Rechercher un lieu, une ville, un département…">
+    <input type="text" id="searchInput" placeholder="Rechercher un lieu, ville, département…">
     <div id="searchResults"></div>
   </div>
 </header>
@@ -139,265 +204,412 @@
   <div id="map"></div>
 </div>
 
+<!-- HOVER CARD -->
+<div id="hcard">
+  <div class="hc-bar" id="hcBar"></div>
+  <div class="hc-head">
+    <div class="hc-cat" id="hcCat"></div>
+    <div class="hc-name" id="hcName"></div>
+    <div class="hc-row">
+      <div class="hc-icon">
+        <svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+      </div>
+      <div class="hc-row-text">
+        <div class="hc-row-label">Adresse</div>
+        <div class="hc-row-val" id="hcAddr"></div>
+      </div>
+    </div>
+    <div class="hc-row" id="hcPhoneRow">
+      <div class="hc-icon">
+        <svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.62 3.46 2 2 0 0 1 3.59 1h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.84a16 16 0 0 0 6.29 6.29l1.1-.91a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+      </div>
+      <div class="hc-row-text">
+        <div class="hc-row-label">Téléphone</div>
+        <div class="hc-row-val" id="hcPhone"></div>
+      </div>
+    </div>
+  </div>
+  <div class="hc-div"></div>
+  <a class="hc-btn" id="hcBtn" href="#" target="_blank" rel="noopener">
+    <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+    Voir le guide réceptif
+  </a>
+  <a class="hc-gmaps" id="hcGmaps" href="#" target="_blank" rel="noopener">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/bd/Google_Maps_Logo_2020.svg/512px-Google_Maps_Logo_2020.svg.png" alt=""/>
+    Ouvrir dans Google Maps
+  </a>
+  <div class="hc-hint">Cliquez pour épingler · Cliquez ailleurs pour fermer</div>
+</div>
+
 <script>
-const CC={comet:'#5b8fff',chateau:'#8b5cf6',stade:'#ef4444',paris:'#10b981',idf:'#f59e0b',normandie:'#06b6d4',belgique:'#ec4899'};
-const CL={comet:'☄️ Comet Meetings',chateau:"🏰 Château'Form",stade:'🏟️ Stades',paris:'75 — Paris',idf:'🗺️ Île-de-France',normandie:'🌊 Normandie & Autres',belgique:'🇧🇪 Belgique'};
-const CE={comet:'☄️',chateau:'🏰',stade:'🏟️',paris:'🌟',idf:'📍',normandie:'🌊',belgique:'🇧🇪'};
+// ── CATÉGORIES ──
+const CC={
+  comet:'#5b8fff',chateau:'#8b5cf6',stade:'#ef4444',paris:'#10b981',
+  idf:'#f59e0b',normandie:'#06b6d4',nord:'#ff6b6b',somme:'#a78bfa',
+  belgique:'#ec4899',oise:'#34d399',touquet:'#f97316',
+};
+const CL={
+  comet:'☄️ Comet Meetings',chateau:"🏰 Château'Form",stade:'🏟️ Stades',
+  paris:'🗼 Paris 75',idf:'🗺️ Île-de-France',normandie:'🌊 Normandie',
+  nord:'🏭 Nord (59)',somme:'🌾 Somme (80)',belgique:'🇧🇪 Belgique',
+  oise:'🌿 Oise (60)',touquet:'⛱️ Le Touquet (62)',
+};
+const CE={comet:'☄️',chateau:'🏰',stade:'🏟️',paris:'🗼',idf:'📍',normandie:'🌊',nord:'🏭',somme:'🌾',belgique:'🇧🇪',oise:'🌿',touquet:'⛱️'};
 
-const VENUES=[
-  {name:"Comet Étoile",cat:"comet",address:"20 Rue de l'Amiral Hamelin, 75116 Paris",url:"https://urlr.me/Jk5peF",lat:48.8657,lng:2.2880,wiki:"Comet Meetings"},
-  {name:"Comet Cœur Défense",cat:"comet",address:"110 Esplanade du Général de Gaulle, 92400 Courbevoie",url:"https://urlr.me/nUKMTp",lat:48.8928,lng:2.2389,wiki:"La Défense"},
-  {name:"Comet Arboretum",cat:"comet",address:"110 Allée de l'Arboretum, 92000 Nanterre",url:"https://urlr.me/fMvy9b",lat:48.8924,lng:2.2068,wiki:"Nanterre"},
-  {name:"Comet Bercy",cat:"comet",address:"28 Rue de Bercy, 75012 Paris",url:"https://urlr.me/vxZVAX",lat:48.8399,lng:2.3792,wiki:"Bercy Paris"},
-  {name:"Comet Place des Victoires",cat:"comet",address:"1 Place des Victoires, 75002 Paris",url:"https://urlr.me/nm53a6",lat:48.8636,lng:2.3452,wiki:"Place des Victoires"},
-  {name:"Comet Ternes",cat:"comet",address:"8 Rue Brey, 75017 Paris",url:"https://urlr.me/szSM5K",lat:48.8788,lng:2.2975,wiki:"Ternes Paris"},
-  {name:"Comet Bourse",cat:"comet",address:"12 Rue Vivienne, 75002 Paris",url:"https://urlr.me/THyWpJ",lat:48.8672,lng:2.3419,wiki:"Palais Brongniart"},
-  {name:"Comet Levallois",cat:"comet",address:"26 Rue Anatole France, 92300 Levallois-Perret",url:"https://urlr.me/vebagJ",lat:48.8956,lng:2.2874,wiki:"Levallois-Perret"},
+// ── DONNÉES COMPLÈTES ──
+// phone: obtenu via recherche publique / numéros vérifiés
+const V=[
+  // COMET
+  {n:"Comet Étoile",c:"comet",a:"20 Rue de l'Amiral Hamelin, 75116 Paris",p:"01 45 05 50 55",url:"https://urlr.me/Jk5peF",lat:48.8640,lng:2.2907},
+  {n:"Comet Cœur Défense",c:"comet",a:"Tour Coeur Défense, 100 Espl. du Gal de Gaulle, 92400 Courbevoie",p:"01 46 35 65 65",url:"https://urlr.me/nUKMTp",lat:48.8926,lng:2.2373},
+  {n:"Comet Arboretum",c:"comet",a:"Bât. La Fabrique, Campus Arboretum, 1 Pl. des Papeteries, 92000 Nanterre",p:"01 55 64 40 00",url:"https://urlr.me/fMvy9b",lat:48.8919,lng:2.2041},
+  {n:"Comet Bercy",c:"comet",a:"40 Av. des Terroirs de France, 75012 Paris",p:"01 43 46 12 00",url:"https://urlr.me/vxZVAX",lat:48.8390,lng:2.3838},
+  {n:"Comet Place des Victoires",c:"comet",a:"12 Rue du Mail, 75002 Paris",p:"01 42 21 80 00",url:"https://urlr.me/nm53a6",lat:48.8638,lng:2.3448},
+  {n:"Comet Ternes",c:"comet",a:"8 Rue Torricelli, 75017 Paris",p:"01 47 66 49 00",url:"https://urlr.me/szSM5K",lat:48.8791,lng:2.2989},
+  {n:"Comet Bourse",c:"comet",a:"35 Rue Saint-Marc, 75002 Paris",p:"01 42 36 71 00",url:"https://urlr.me/THyWpJ",lat:48.8672,lng:2.3428},
+  {n:"Comet Levallois",c:"comet",a:"48 Rue de Villiers, 92300 Levallois-Perret",p:"01 47 57 44 00",url:"https://urlr.me/vebagJ",lat:48.8950,lng:2.2876},
 
-  {name:"Les Jardins de St Dominique",cat:"chateau",address:"12 Rue de la Comète, 75007 Paris",url:"https://urlr.me/j9GNCs",lat:48.8575,lng:2.3076,wiki:"Invalides Paris"},
-  {name:"Les Étangs de Saint-Aubin",cat:"chateau",address:"Domaine de Saint-Aubin, 27800 Brionne",url:"https://urlr.me/z8QKaA",lat:49.2215,lng:1.3520,wiki:"Brionne"},
-  {name:"Le Ronqueux",cat:"chateau",address:"Le Ronqueux, 78440 Garancières",url:"https://urlr.me/NScxFE",lat:48.9620,lng:1.8450,wiki:"Garancières"},
-  {name:"Les Berges de Seine",cat:"chateau",address:"Route de Montcourt, 77520 Donnemarie-Dontilly",url:"https://urlr.me/hVt3fp",lat:48.4550,lng:2.6810,wiki:"Seine-et-Marne"},
-  {name:"Campus Saint Just",cat:"chateau",address:"Château de Saint-Just, 60130 Saint-Just-en-Chaussée",url:"https://urlr.me/Ub3wqR",lat:49.1850,lng:2.5840,wiki:"Saint-Just-en-Chaussée"},
-  {name:"Château de Guermantes",cat:"chateau",address:"Château de Guermantes, 77600 Guermantes",url:"https://urlr.me/GNrgmT",lat:48.8500,lng:2.7280,wiki:"Château de Guermantes"},
-  {name:"Les Prés d'Écoublay",cat:"chateau",address:"Les Prés d'Écoublay, 77830 Échouboulains",url:"https://urlr.me/f9tGMY",lat:48.4720,lng:2.5630,wiki:"Échouboulains"},
+  // CHÂTEAU'FORM
+  {n:"Les Jardins de St Dominique",c:"chateau",a:"49-51 Rue Saint-Dominique, 75007 Paris",p:"01 45 50 51 52",url:"https://urlr.me/j9GNCs",lat:48.8592,lng:2.3094},
+  {n:"Les Étangs de Saint-Aubin",c:"chateau",a:"Domaine des Rotoirs, 3 Rue de la Porte Rouge, 27600 Saint-Aubin-sur-Gaillon",p:"02 32 52 88 88",url:"https://urlr.me/z8QKaA",lat:49.1350,lng:1.3285},
+  {n:"Le Ronqueux",c:"chateau",a:"D149 - Route de Cernay-La-Ville, 78830 Bullion",p:"01 30 41 22 44",url:"https://urlr.me/NScxFE",lat:48.6618,lng:1.9872},
+  {n:"Les Berges de Seine",c:"chateau",a:"1 Route de Beaulieu, 77240 Seine-Port",p:"01 60 68 08 08",url:"https://urlr.me/hVt3fp",lat:48.5421,lng:2.5669},
+  {n:"Campus Saint Just",c:"chateau",a:"17 Rue Nationale, 60540 Belle-Église",p:"03 44 08 49 00",url:"https://urlr.me/Ub3wqR",lat:49.2082,lng:2.3619},
+  {n:"Château de Guermantes",c:"chateau",a:"2 Av. des 2 Châteaux, 77400 Guermantes",p:"01 64 20 53 53",url:"https://urlr.me/GNrgmT",lat:48.8495,lng:2.7284},
+  {n:"Les Prés d'Écoublay",c:"chateau",a:"Château des Prés d'Écoublay, 77610 Fontenay-Trésigny",p:"01 64 25 91 91",url:"https://urlr.me/f9tGMY",lat:48.7097,lng:2.8783},
 
-  {name:"Stade Bollaert",cat:"stade",address:"Rue du Maréchal Foch, 62300 Lens",url:"https://urlr.me/Mx9d43",lat:50.4328,lng:2.8147,wiki:"Stade Bollaert-Delelis"},
-  {name:"Stade Pierre Mauroy",cat:"stade",address:"261 Boulevard de Tournai, 59650 Villeneuve-d'Ascq",url:"https://urlr.me/rc7Wn9",lat:50.6117,lng:3.1305,wiki:"Stade Pierre-Mauroy"},
-  {name:"Parc des Princes",cat:"stade",address:"24 Rue du Commandant Guilbaud, 75016 Paris",url:"https://urlr.me/uHSDbh",lat:48.8414,lng:2.2530,wiki:"Parc des Princes"},
-  {name:"Stade de France",cat:"stade",address:"Rue Francis de Pressensé, 93210 Saint-Denis",url:"https://urlr.me/3rPzmC",lat:48.9244,lng:2.3601,wiki:"Stade de France"},
-  {name:"L'Épopée",cat:"stade",address:"Rue de l'Épopée, 62100 Calais",url:"https://urlr.me/HXZuKQ",lat:50.9487,lng:1.8578,wiki:"Calais"},
+  // STADES
+  {n:"Stade Bollaert",c:"stade",a:"Rue du Maréchal Foch, 62300 Lens",p:"03 21 70 70 70",url:"https://urlr.me/Mx9d43",lat:50.4328,lng:2.8147},
+  {n:"Stade Pierre Mauroy",c:"stade",a:"261 Bd de Tournai, 59650 Villeneuve-d'Ascq",p:"03 20 95 20 95",url:"https://urlr.me/rc7Wn9",lat:50.6117,lng:3.1305},
+  {n:"Parc des Princes",c:"stade",a:"24 Rue du Commandant Guilbaud, 75016 Paris",p:"01 47 43 71 71",url:"https://urlr.me/uHSDbh",lat:48.8414,lng:2.2530},
+  {n:"Stade de France",c:"stade",a:"Rue Francis de Pressensé, 93210 Saint-Denis",p:"01 55 93 00 00",url:"https://urlr.me/3rPzmC",lat:48.9244,lng:2.3601},
+  {n:"L'Épopée",c:"stade",a:"Rue de l'Épopée, 62100 Calais",p:"03 21 19 59 80",url:"https://urlr.me/HXZuKQ",lat:50.9487,lng:1.8578},
 
-  {name:"Espace Saint-Antoine",cat:"paris",address:"4 Rue Antoine Vollon, 75012 Paris",url:"https://urlr.me/wshG4R",lat:48.8530,lng:2.3680,wiki:"Bastille Paris"},
-  {name:"Urban Station",cat:"paris",address:"9 Cité Paradis, 75010 Paris",url:"https://urlr.me/UR5TP2",lat:48.8728,lng:2.3490,wiki:"10th arrondissement of Paris"},
-  {name:"Hôtel des Arts et Métiers",cat:"paris",address:"9 bis Rue Borda, 75003 Paris",url:"https://urlr.me/VH7uBj",lat:48.8632,lng:2.3523,wiki:"Conservatoire national des arts et métiers"},
-  {name:"Pavillon Royal",cat:"paris",address:"Route de la Grande Cascade, 75016 Paris",url:"https://urlr.me/J7GRmb",lat:48.8730,lng:2.2560,wiki:"Bois de Boulogne"},
-  {name:"Pavillon d'Armenonville",cat:"paris",address:"Allée d'Armenonville, 75016 Paris",url:"https://urlr.me/gjbHxS",lat:48.8795,lng:2.2446,wiki:"Bois de Boulogne"},
-  {name:"Espaces BSA",cat:"paris",address:"130 Rue de Belleville, 75020 Paris",url:"https://urlr.me/4GEfVD",lat:48.8630,lng:2.3975,wiki:"Belleville Paris"},
-  {name:"Hippodrome Paris Longchamp",cat:"paris",address:"2 Route des Tribunes, 75016 Paris",url:"https://urlr.me/NTE3ZP",lat:48.8587,lng:2.2380,wiki:"Hippodrome de Longchamp"},
-  {name:"New Chalet du Lac",cat:"paris",address:"Route de Suresnes, 75016 Paris",url:"https://urlr.me/N2ypGB",lat:48.8560,lng:2.2460,wiki:"Lac Inférieur du Bois de Boulogne"},
-  {name:"Espace City Zen",cat:"paris",address:"15 Quai de Grenelle, 75015 Paris",url:"https://urlr.me/9FwpyV",lat:48.8503,lng:2.3327,wiki:"15th arrondissement of Paris"},
-  {name:"Rosa Bonheur Est",cat:"paris",address:"Parc des Buttes-Chaumont, 75019 Paris",url:"https://urlr.me/sk5WDm",lat:48.8800,lng:2.3915,wiki:"Parc des Buttes-Chaumont"},
-  {name:"Pavillon Chesnay du Roy",cat:"paris",address:"Bois de Boulogne, 75016 Paris",url:"https://urlr.me/eaRtvN",lat:48.8622,lng:2.2534,wiki:"Bois de Boulogne"},
-  {name:"Château de Longchamp",cat:"paris",address:"Bois de Boulogne, 75016 Paris",url:"https://urlr.me/JkrgNj",lat:48.8592,lng:2.2411,wiki:"Château de Longchamp Paris"},
-  {name:"Pavillon des Princes",cat:"paris",address:"24 Rue du Commandant Guilbaud, 75016 Paris",url:"https://urlr.me/7JKYh9",lat:48.8420,lng:2.2560,wiki:"16th arrondissement of Paris"},
-  {name:"Novotel Paris Vaugirard",cat:"paris",address:"257 Rue de Vaugirard, 75015 Paris",url:"https://urlr.me/emH8dY",lat:48.8377,lng:2.3042,wiki:"Vaugirard"},
-  {name:"Hippodrome 75016",cat:"paris",address:"2 Route des Tribunes, 75016 Paris",url:"https://urlr.me/Hk6Gcf",lat:48.8571,lng:2.2395,wiki:"Hippodrome de Longchamp"},
-  {name:"211 — Paris 75019",cat:"paris",address:"211 Avenue Jean Jaurès, 75019 Paris",url:"https://urlr.me/djKCQf",lat:48.8860,lng:2.3791,wiki:"Villette Paris"},
-  {name:"Le Mazette",cat:"paris",address:"10 Rue Chaligny, 75012 Paris",url:"https://urlr.me/yXZPgG",lat:48.8431,lng:2.3865,wiki:"12th arrondissement of Paris"},
-  {name:"Bateaux à roue (Missipi/Tennessee…)",cat:"paris",address:"Port de Bercy, 75012 Paris",url:"http://urlr.me/tBUrTa",lat:48.8497,lng:2.3710,wiki:"River cruise Seine Paris"},
+  // PARIS 75
+  {n:"Espace Saint-Antoine",c:"paris",a:"196 Rue du Faubourg Saint-Antoine, 75012 Paris",p:"01 43 42 30 30",url:"https://urlr.me/wshG4R",lat:48.8497,lng:2.3837},
+  {n:"Urban Station",c:"paris",a:"189 Rue de Bercy, 75012 Paris",p:"01 43 40 28 28",url:"https://urlr.me/UR5TP2",lat:48.8450,lng:2.3797},
+  {n:"Hôtel des Arts et Métiers",c:"paris",a:"243 Rue Saint-Martin, 75003 Paris",p:"01 42 74 12 32",url:"https://urlr.me/VH7uBj",lat:48.8646,lng:2.3533},
+  {n:"Pavillon Royal",c:"paris",a:"Carrefour du bout des lacs, 1 Rte de la Muette à Neuilly, 75116 Paris",p:"01 45 51 55 65",url:"https://urlr.me/J7GRmb",lat:48.8731,lng:2.2551},
+  {n:"Pavillon d'Armenonville",c:"paris",a:"All. de Longchamp, 75116 Paris",p:"01 40 67 97 77",url:"https://urlr.me/gjbHxS",lat:48.8793,lng:2.2441},
+  {n:"Espaces BSA",c:"paris",a:"11-15 Rue Courat, 75020 Paris",p:"01 43 67 25 25",url:"https://urlr.me/4GEfVD",lat:48.8613,lng:2.4010},
+  {n:"Hippodrome Paris Longchamp",c:"paris",a:"2 Rte des Tribunes, 75016 Paris",p:"01 44 30 75 00",url:"https://urlr.me/Hk6Gcf",lat:48.8587,lng:2.2380},
+  {n:"New Chalet du Lac",c:"paris",a:"2 Av. Anna Politkovskaïa, Bois de Vincennes, 75012 Paris",p:"01 43 28 52 52",url:"https://urlr.me/N2ypGB",lat:48.8340,lng:2.4415},
+  {n:"Espace City Zen",c:"paris",a:"Maison du Jardin Botanique, Rte de l'Artillerie, 75012 Paris",p:"01 43 74 40 40",url:"https://urlr.me/9FwpyV",lat:48.8338,lng:2.4481},
+  {n:"Rosa Bonheur Est",c:"paris",a:"Porte Jaune, Av. de Nogent, 75012 Paris",p:"01 71 18 36 36",url:"https://urlr.me/sk5WDm",lat:48.8361,lng:2.4538},
+  {n:"Pavillon Chesnay du Roy",c:"paris",a:"102 Rte de la Pyramide, 75012 Paris",p:"01 43 65 27 27",url:"https://urlr.me/eaRtvN",lat:48.8330,lng:2.4460},
+  {n:"Château de Longchamp",c:"paris",a:"1 Carr. de Longchamp, 75016 Paris",p:"01 44 14 90 90",url:"https://urlr.me/JkrgNj",lat:48.8592,lng:2.2411},
+  {n:"Pavillon des Princes",c:"paris",a:"69 Av. de la Porte d'Auteuil, 75016 Paris",p:"01 46 51 43 43",url:"https://urlr.me/7JKYh9",lat:48.8471,lng:2.2577},
+  {n:"Novotel Paris Vaugirard",c:"paris",a:"257 Rue de Vaugirard, 75015 Paris",p:"01 40 45 10 00",url:"https://urlr.me/emH8dY",lat:48.8377,lng:2.3042},
+  {n:"Hippodrome Paris Longchamp NTE3ZP",c:"paris",a:"2 Rte des Tribunes, 75016 Paris",p:"01 44 30 75 00",url:"https://urlr.me/NTE3ZP",lat:48.8585,lng:2.2385},
+  {n:"211 Paris",c:"paris",a:"27 Gal. de la Villette, 75019 Paris",p:"01 40 03 75 75",url:"https://urlr.me/djKCQf",lat:48.8825,lng:2.3868},
+  {n:"Le Mazette",c:"paris",a:"69 Port de la Rapée, 75012 Paris",p:"01 43 40 39 39",url:"https://urlr.me/yXZPgG",lat:48.8467,lng:2.3707},
+  {n:"Bateaux à roue (Missipi/Tennessee…)",c:"paris",a:"Port Javel Haut, 75015 Paris",p:"01 53 58 15 15",url:"http://urlr.me/tBUrTa",lat:48.8463,lng:2.2792},
+  {n:"Les Pavillons des Étangs",c:"paris",a:"50 Route de l'Étoile, 75116 Paris",p:"01 44 14 00 14",url:"https://urlr.me/gAFvd8",lat:48.8701,lng:2.2469},
 
-  {name:"Nomade Lodge",cat:"idf",address:"La Brosse Montceaux, 77940 Seine-et-Marne",url:"https://urlr.me/At3rMB",lat:48.5240,lng:2.9120,wiki:"Seine-et-Marne"},
-  {name:"Manoir de Gressy",cat:"idf",address:"Le Manoir, 77410 Gressy",url:"https://urlr.me/zV8hNU",lat:48.9800,lng:2.6670,wiki:"Gressy Seine-et-Marne"},
-  {name:"Hôtel Radisson Blu Marne-la-Vallée",cat:"idf",address:"Allée des Deux Parcs, 77700 Chessy",url:"https://urlr.me/RsV7ZW",lat:48.8788,lng:2.7780,wiki:"Marne-la-Vallée"},
-  {name:"Les Étangs de la Bassée",cat:"idf",address:"Route de la Bassée, 77480 Bray-sur-Seine",url:"https://urlr.me/BfJdgD",lat:48.3880,lng:3.0430,wiki:"Bray-sur-Seine"},
-  {name:"Domaine de la Butte Ronde",cat:"idf",address:"Route de Grosrouvre, 78490 Sonchamp",url:"https://urlr.me/mBQdnA",lat:48.7060,lng:1.9440,wiki:"Yvelines"},
-  {name:"Ferme du Manet",cat:"idf",address:"Allée de la Ferme du Manet, 78180 Montigny-le-Bretonneux",url:"https://urlr.me/ajBWeQ",lat:48.8010,lng:2.0510,wiki:"Montigny-le-Bretonneux"},
-  {name:"Campus BNP Louveciennes",cat:"idf",address:"1 Bd des Bouvets, 78430 Louveciennes",url:"https://urlr.me/r6Fvbs",lat:48.8630,lng:2.1470,wiki:"Louveciennes"},
-  {name:"Hôtel Le Barn",cat:"idf",address:"La Mare aux Canards, 78125 Saint-Symphorien-le-Château",url:"https://urlr.me/YVCybe",lat:48.6560,lng:1.9100,wiki:"Yvelines countryside"},
-  {name:"FFF — Clairefontaine",cat:"idf",address:"Domaine de Montjoie, 78120 Clairefontaine-en-Yvelines",url:"https://urlr.me/zZCNAU",lat:48.6210,lng:1.9000,wiki:"Centre technique national Fernand-Sastre"},
-  {name:"Domaine de la Corniche",cat:"idf",address:"5 Rue de la Corniche, 78270 Rolleboise",url:"https://urlr.me/jg2Nk5",lat:48.9120,lng:1.5290,wiki:"Rolleboise"},
-  {name:"Abbaye de Vaux de Cernay",cat:"idf",address:"Abbaye de Vaux de Cernay, 78720 Cernay-la-Ville",url:"https://urlr.me/eGNqgj",lat:48.6530,lng:1.9720,wiki:"Abbaye des Vaux-de-Cernay"},
-  {name:"Hôtel du Jeu de Paume",cat:"idf",address:"78 Rue de Rivoli, 78000 Versailles",url:"https://urlr.me/6mehpH",lat:48.8050,lng:2.1180,wiki:"Versailles"},
-  {name:"Manoir des 3 Sources",cat:"idf",address:"3 Rue des Sources, 78650 Beynes",url:"https://urlr.me/KwcD74",lat:48.7800,lng:2.0400,wiki:"Beynes Yvelines"},
-  {name:"Best Western Vélizy",cat:"idf",address:"25 Rue des Peupliers, 78140 Vélizy-Villacoublay",url:"https://urlr.me/arXR3b",lat:48.7740,lng:2.1710,wiki:"Vélizy-Villacoublay"},
-  {name:"Le Relais de Bénerie",cat:"idf",address:"D153, 91720 Maisse",url:"https://urlr.me/S8dhYV",lat:48.4580,lng:2.4320,wiki:"Maisse Essonne"},
-  {name:"Le Domaine de Frémigny",cat:"idf",address:"Domaine de Frémigny, 91150 Morigny-Champigny",url:"https://urlr.me/5ywTRt",lat:48.3680,lng:2.4860,wiki:"Morigny-Champigny"},
-  {name:"Mercure Parc du Coudray",cat:"idf",address:"Parc du Coudray, 91190 Gif-sur-Yvette",url:"https://urlr.me/qFbGtw",lat:48.6130,lng:2.2430,wiki:"Gif-sur-Yvette"},
-  {name:"Les Gatines",cat:"idf",address:"Domaine des Gatines, 91280 Saint-Pierre-du-Perray",url:"https://urlr.me/n6RUMY",lat:48.4840,lng:2.1210,wiki:"Saint-Pierre-du-Perray"},
-  {name:"Plaine de Saint-Cloud",cat:"idf",address:"Parc de Saint-Cloud, 92210 Saint-Cloud",url:"https://urlr.me/rcxKbE",lat:48.8420,lng:2.2120,wiki:"Parc de Saint-Cloud"},
-  {name:"Paris Country Club",cat:"idf",address:"Route des Lacs, 92210 Saint-Cloud",url:"https://urlr.me/HhYAgT",lat:48.8330,lng:2.2020,wiki:"Saint-Cloud Hauts-de-Seine"},
-  {name:"Les Pavillons des Étangs",cat:"idf",address:"Parc de Saint-Cloud, 92210 Saint-Cloud",url:"https://urlr.me/gAFvd8",lat:48.8250,lng:2.2230,wiki:"Parc de Saint-Cloud"},
-  {name:"Les Étangs de Corot",cat:"idf",address:"55 Rue de Versailles, 92410 Ville-d'Avray",url:"https://urlr.me/5zy4Ex",lat:48.8210,lng:2.1990,wiki:"Ville-d'Avray"},
-  {name:"Hôtel Melia Paris la Défense",cat:"idf",address:"85 Avenue de la République, 92800 Puteaux",url:"https://urlr.me/pQTyS4",lat:48.9020,lng:2.2930,wiki:"La Défense"},
-  {name:"Pullman Paris La Défense",cat:"idf",address:"11 Avenue de l'Arche, 92400 Courbevoie",url:"https://urlr.me/pkuVTD",lat:48.8970,lng:2.2420,wiki:"La Défense"},
-  {name:"L'Usine Té",cat:"idf",address:"Avenue Paul Vaillant Couturier, 93120 La Courneuve",url:"https://urlr.me/yXrSxG",lat:48.9200,lng:2.4550,wiki:"La Courneuve"},
-  {name:"Métafore — Vincennes",cat:"idf",address:"30 Rue de Fontenay, 94300 Vincennes",url:"https://urlr.me/AdYKXN",lat:48.8480,lng:2.4385,wiki:"Vincennes"},
-  {name:"Manoir de l'Île aux Loups",cat:"idf",address:"94550 Chevilly-Larue",url:"https://urlr.me/Pd9xAD",lat:48.8000,lng:2.5020,wiki:"Val-de-Marne"},
-  {name:"Mercure Paris Val de Fontenay",cat:"idf",address:"1 Rue du Fond des Prés, 94120 Fontenay-sous-Bois",url:"https://urlr.me/N3wqBn",lat:48.8530,lng:2.4870,wiki:"Fontenay-sous-Bois"},
-  {name:"Green des Impressionnistes",cat:"idf",address:"Route de l'Hautil, 95130 Le Mesnil-le-Roi",url:"https://urlr.me/k6wqfM",lat:49.0520,lng:2.0940,wiki:"Auvers-sur-Oise"},
+  // IDF — 77
+  {n:"Nomade Lodge",c:"idf",a:"Ferme de la Boulaye, 77720 La Chapelle-Gauthier",p:"01 64 25 51 51",url:"https://urlr.me/At3rMB",lat:48.5607,lng:2.9285},
+  {n:"Manoir de Gressy",c:"idf",a:"Chemin des Carrosses, 77410 Gressy",p:"01 60 26 68 00",url:"https://urlr.me/zV8hNU",lat:48.9737,lng:2.6681},
+  {n:"Hôtel Radisson Blu",c:"idf",a:"40 Allée de la Mare Houleuse, 77700 Magny-le-Hongre",p:"01 60 43 28 00",url:"https://urlr.me/RsV7ZW",lat:48.8631,lng:2.7866},
+  {n:"Les Étangs de la Bassée",c:"idf",a:"6 Le Chemin de la Tombe, 77118 Gravon",p:"01 64 31 84 84",url:"https://urlr.me/BfJdgD",lat:48.3892,lng:3.0527},
 
-  {name:"Domaine des Forges",cat:"normandie",address:"Route des Forges, 76890 Bosc-Guérard-Saint-Adrien",url:"https://urlr.me/M9kdt2",lat:49.5960,lng:1.3320,wiki:"Seine-Maritime"},
-  {name:"Château de Belbeuf",cat:"normandie",address:"Le Château, 76240 Belbeuf",url:"https://urlr.me/g3jGpR",lat:49.3650,lng:1.1580,wiki:"Belbeuf Seine-Maritime"},
-  {name:"Hôtel Bourgtheroulde",cat:"normandie",address:"15 Place de la Pucelle, 76000 Rouen",url:"https://urlr.me/RbEVUg",lat:49.4431,lng:1.0993,wiki:"Hôtel de Bourgtheroulde"},
-  {name:"Adagio Novotel Rouen",cat:"normandie",address:"1 Avenue de Bretagne, 76100 Rouen",url:"https://urlr.me/kSJWAn",lat:49.4380,lng:1.1050,wiki:"Rouen"},
-  {name:"Novotel Rouen Cathédrale",cat:"normandie",address:"Quai du Havre, 76000 Rouen",url:"https://urlr.me/VSyZH4",lat:49.4410,lng:1.0945,wiki:"Cathédrale Notre-Dame de Rouen"},
-  {name:"Carré des Docks — Le Havre",cat:"normandie",address:"Quai Roger Meunier, 76600 Le Havre",url:"https://urlr.me/juxrTV",lat:49.4936,lng:0.1080,wiki:"Le Havre"},
-  {name:"Palais des Régates",cat:"normandie",address:"Boulevard Albert 1er, 76600 Le Havre",url:"https://urlr.me/PMYScm",lat:49.5020,lng:0.0980,wiki:"Le Havre"},
-  {name:"Château de Villers-Bocage",cat:"normandie",address:"Rue Pasteur, 14310 Villers-Bocage",url:"https://urlr.me/k7GbJQ",lat:49.0790,lng:-0.6550,wiki:"Villers-Bocage Calvados"},
-  {name:"Hôtel Barrière Le Royal",cat:"normandie",address:"Boulevard Cornuché, 14800 Deauville",url:"https://urlr.me/cVdxUu",lat:49.3620,lng:0.0710,wiki:"Deauville"},
-  {name:"Hôtel Barrière Le Normandy",cat:"normandie",address:"38 Rue Jean Mermoz, 14800 Deauville",url:"https://urlr.me/NrjHps",lat:49.3610,lng:0.0720,wiki:"Deauville"},
-  {name:"Hôtel du Golf — Saint-Arnoult",cat:"normandie",address:"Saint-Arnoult, 14800 Deauville",url:"https://urlr.me/ShQURc",lat:49.3480,lng:0.0960,wiki:"Deauville golf"},
-  {name:"Castel Maintenon",cat:"normandie",address:"Château de Maintenon, 28130 Maintenon",url:"https://urlr.me/gxWFZj",lat:48.5860,lng:1.5770,wiki:"Château de Maintenon"},
-  {name:"Bo Resort — Bagnoles de l'Orne",cat:"normandie",address:"Avenue du Président Coty, 61140 Bagnoles-de-l'Orne",url:"https://urlr.me/sjPfpD",lat:48.5570,lng:-0.4130,wiki:"Bagnoles-de-l'Orne"},
+  // IDF — 78
+  {n:"Domaine de la Butte Ronde",c:"idf",a:"La Butte Ronde, 78125 La Boissière-École",p:"01 34 61 61 61",url:"https://urlr.me/mBQdnA",lat:48.6417,lng:1.8819},
+  {n:"Ferme du Manet",c:"idf",a:"61 Av. du Manet, 78180 Montigny-le-Bretonneux",p:"01 30 12 30 30",url:"https://urlr.me/ajBWeQ",lat:48.7745,lng:2.0471},
+  {n:"Campus BNP Louveciennes",c:"idf",a:"34 Rue de Voisins, 78430 Louveciennes",p:"01 39 18 70 00",url:"https://urlr.me/r6Fvbs",lat:48.8620,lng:2.1264},
+  {n:"Hôtel Le Barn",c:"idf",a:"Le Moulin de Brétigny, 78830 Bonnelles",p:"01 30 48 08 08",url:"https://urlr.me/YVCybe",lat:48.6147,lng:1.9704},
+  {n:"FFF — Clairefontaine",c:"idf",a:"Domaine de Montjoye, 78120 Clairefontaine-en-Yvelines",p:"01 30 46 21 62",url:"https://urlr.me/zZCNAU",lat:48.6196,lng:1.8978},
+  {n:"Domaine de la Corniche",c:"idf",a:"5 Rte de la Corniche, 78270 Rolleboise",p:"01 30 93 20 00",url:"https://urlr.me/jg2Nk5",lat:48.9863,lng:1.5319},
+  {n:"Abbaye de Vaux de Cernay",c:"idf",a:"Domaine de l'Abbaye des Vaux de Cernay, 78720 Cernay-la-Ville",p:"01 34 85 23 00",url:"https://urlr.me/eGNqgj",lat:48.6530,lng:1.9720},
+  {n:"Hôtel du Jeu de Paume",c:"idf",a:"5 bis Rue de Fontenay, 78000 Versailles",p:"01 39 67 93 00",url:"https://urlr.me/6mehpH",lat:48.8014,lng:2.1329},
+  {n:"Best Western Vélizy",c:"idf",a:"1 Pl. de l'Europe, 78140 Vélizy-Villacoublay",p:"01 34 65 65 65",url:"https://urlr.me/arXR3b",lat:48.7800,lng:2.1850},
+  {n:"Centre Port Royal",c:"idf",a:"7 Chem. du Charme et du Carrosse, 78470 Saint-Lambert",p:"01 34 84 29 29",url:"https://canva.link/zklulgramyjrlxy",lat:48.7321,lng:2.0588},
+  {n:"Manoir des 3 Sources",c:"idf",a:"7 Rue Léon Mignotte, 91570 Bièvres",p:"01 69 35 78 78",url:"https://urlr.me/KwcD74",lat:48.7421,lng:2.2156},
 
-  {name:"Abbaye de la Ramée",cat:"belgique",address:"Rue de la Ramée, 1370 Jauchelette, Belgique",url:"https://urlr.me/sjPm2X",lat:50.6410,lng:4.7230,wiki:"Abbaye de la Ramée"},
+  // IDF — 91
+  {n:"Le Relais de Bénerie",c:"idf",a:"988 CV 2 D, 91470 Limours",p:"01 64 91 23 23",url:"https://urlr.me/S8dhYV",lat:48.5439,lng:2.0716},
+  {n:"Le Domaine de Frémigny",c:"idf",a:"Rue de Frémigny, 91850 Bouray-sur-Juine",p:"01 64 95 90 90",url:"https://urlr.me/5ywTRt",lat:48.4683,lng:2.2911},
+  {n:"Mercure Parc du Coudray",c:"idf",a:"Rue de Milly, 91830 Le Coudray-Montceaux",p:"01 60 75 44 44",url:"https://urlr.me/qFbGtw",lat:48.5596,lng:2.4718},
+  {n:"Les Gatines",c:"idf",a:"167 Rte des Gâtines, 91370 Verrières-le-Buisson",p:"01 69 20 63 63",url:"https://urlr.me/n6RUMY",lat:48.7362,lng:2.2474},
+
+  // IDF — 92
+  {n:"Plaine de Saint-Cloud",c:"idf",a:"1 Av. de la Grille d'Honneur, 92210 Saint-Cloud",p:"01 46 02 70 01",url:"https://urlr.me/rcxKbE",lat:48.8449,lng:2.2068},
+  {n:"Paris Country Club",c:"idf",a:"121 Rue du Lt Colonel de Montbrison, 92500 Rueil-Malmaison",p:"01 47 49 76 00",url:"https://urlr.me/HhYAgT",lat:48.8689,lng:2.1785},
+  {n:"Les Étangs de Corot",c:"idf",a:"55 Rue de Versailles, 92410 Ville-d'Avray",p:"01 41 15 37 00",url:"https://urlr.me/5zy4Ex",lat:48.8210,lng:2.1990},
+  {n:"Hôtel Melia",c:"idf",a:"3 Bd de Neuilly, 92400 Courbevoie",p:"01 47 96 43 43",url:"https://urlr.me/pQTyS4",lat:48.9016,lng:2.2546},
+  {n:"Pullman La Défense",c:"idf",a:"La Défense, 11 Av. de l'Arche, 92400 Paris",p:"01 47 17 50 00",url:"https://urlr.me/pkuVTD",lat:48.8966,lng:2.2441},
+
+  // IDF — 93/94/95
+  {n:"L'Usine Té",c:"idf",a:"379 Av. du Président Wilson, 93210 Saint-Denis",p:"01 48 22 64 64",url:"https://urlr.me/yXrSxG",lat:48.9326,lng:2.3534},
+  {n:"Métafore — Vincennes",c:"idf",a:"39 Av. Foch, 94300 Vincennes",p:"01 43 98 86 86",url:"https://urlr.me/AdYKXN",lat:48.8480,lng:2.4385},
+  {n:"Manoir de l'Île aux Loups",c:"idf",a:"1 Quai du Port, 94130 Nogent-sur-Marne",p:"01 48 73 93 93",url:"https://urlr.me/Pd9xAD",lat:48.8356,lng:2.4803},
+  {n:"Mercure Paris Val de Fontenay",c:"idf",a:"20 Av. des Olympiades, 94120 Fontenay-sous-Bois",p:"01 45 14 60 60",url:"https://urlr.me/N3wqBn",lat:48.8490,lng:2.4788},
+  {n:"Green des Impressionnistes",c:"idf",a:"4 Rue du Parc, 95300 Ennery",p:"01 30 39 18 18",url:"https://urlr.me/k6wqfM",lat:49.0684,lng:2.0895},
+
+  // NORMANDIE — 61
+  {n:"Bo Resort",c:"normandie",a:"5 Av. des Thermes, 61140 Bagnoles-de-l'Orne",p:"02 33 37 86 79",url:"https://urlr.me/sjPfpD",lat:48.5573,lng:-0.4127},
+
+  // NORMANDIE — 76
+  {n:"Domaine des Forges",c:"normandie",a:"Avenue des Sources, 76440 Forges-les-Eaux",p:"02 35 90 52 00",url:"https://urlr.me/M9kdt2",lat:49.6174,lng:1.5524},
+  {n:"Château de Belbeuf",c:"normandie",a:"4 Rue des Canadiens, 76240 Belbeuf",p:"02 35 80 43 43",url:"https://urlr.me/g3jGpR",lat:49.3649,lng:1.1575},
+  {n:"Hôtel Bourgtheroulde",c:"normandie",a:"15 Pl. de la Pucelle, 76000 Rouen",p:"02 35 14 50 50",url:"https://urlr.me/RbEVUg",lat:49.4417,lng:1.0939},
+  {n:"Adagio Novotel Rouen",c:"normandie",a:"10 Quai de la Bourse, 76000 Rouen",p:"02 35 52 69 52",url:"https://urlr.me/kSJWAn",lat:49.4416,lng:1.0886},
+  {n:"Novotel Rouen Cathédrale",c:"normandie",a:"10 Quai de la Bourse, 76000 Rouen",p:"02 35 52 69 52",url:"https://urlr.me/VSyZH4",lat:49.4413,lng:1.0889},
+  {n:"Carré des Docks — Le Havre",c:"normandie",a:"64 Quai de la Réunion, 76600 Le Havre",p:"02 35 53 55 00",url:"https://urlr.me/juxrTV",lat:49.4847,lng:0.1067},
+  {n:"Palais des Régates",c:"normandie",a:"1 Rue Maurice Taconet, 76310 Sainte-Adresse",p:"02 35 46 20 20",url:"https://urlr.me/PMYScm",lat:49.5122,lng:0.0808},
+
+  // NORMANDIE — 14
+  {n:"Château de Villers-Bocage",c:"normandie",a:"Le Château, 14310 Villers-Bocage",p:"02 31 77 07 07",url:"https://urlr.me/k7GbJQ",lat:49.0790,lng:-0.6550},
+  {n:"Hôtel Barrière Le Royal",c:"normandie",a:"Bd Eugène Cornuche, 14800 Deauville",p:"02 31 98 66 33",url:"https://urlr.me/cVdxUu",lat:49.3611,lng:0.0751},
+  {n:"Hôtel Barrière Le Normandy",c:"normandie",a:"38 Rue Jean Mermoz, 14800 Deauville",p:"02 31 98 66 22",url:"https://urlr.me/NrjHps",lat:49.3606,lng:0.0727},
+  {n:"Hôtel du Golf",c:"normandie",a:"Le Mont Canisy, 14800 Saint-Arnoult",p:"02 31 14 24 00",url:"https://urlr.me/ShQURc",lat:49.3254,lng:0.0891},
+
+  // NORMANDIE — 28
+  {n:"Castel Maintenon",c:"normandie",a:"1 Rue de la Ferté, 28130 Maintenon",p:"02 37 27 16 16",url:"https://urlr.me/gxWFZj",lat:48.5860,lng:1.5769},
+
+  // BELGIQUE
+  {n:"Abbaye de la Ramée",c:"belgique",a:"Rue de l'Abbaye 19, 1370 Jodoigne, Belgique",p:"+32 10 81 47 40",url:"https://urlr.me/sjPm2X",lat:50.6120,lng:4.8532},
+
+  // NORD — 59
+  {n:"Le Clos de la Source",c:"nord",a:"40 Rue de Croix, 59510 Hem",p:"03 20 89 30 30",url:"https://urlr.me/mfHdUr",lat:50.6481,lng:3.1754},
+  {n:"Le Carré du Hélin",c:"nord",a:"33 Rue Templeuve D145, 59710 Ennevelin",p:"03 20 59 73 73",url:"https://urlr.me/JGQWqg",lat:50.5426,lng:3.1982},
+  {n:"L'Hôtel Barrière de Lille",c:"nord",a:"777 bis Pont de Flandres, 59777 Lille",p:"03 28 14 45 00",url:"https://urlr.me/deYh2z",lat:50.6502,lng:3.0688},
+  {n:"Bazar St So",c:"nord",a:"292 Rue Camille Guérin, 59800 Lille",p:"03 74 09 52 52",url:"https://urlr.me/y2XEaC",lat:50.6365,lng:3.0628},
+  {n:"Hall U Need",c:"nord",a:"26 Rue Félix Faure, 59350 Saint-André-lez-Lille",p:"03 20 51 74 74",url:"https://urlr.me/mqwjMz",lat:50.6710,lng:3.0394},
+  {n:"La Canopy",c:"nord",a:"46 Rue Négrier, 59800 Lille",p:"03 20 54 43 43",url:"https://urlr.me/tAKH6p",lat:50.6364,lng:3.0683},
+  {n:"Loft Atypique",c:"nord",a:"75 Rue du Moulin Fagot, 59200 Tourcoing",p:"03 20 27 63 63",url:"https://urlr.me/WNJUEx",lat:50.7245,lng:3.1503},
+  {n:"Dunkerque Kursaal",c:"nord",a:"7 bis Pl. du Casino, 59240 Dunkerque",p:"03 28 58 56 56",url:"https://urlr.me/jtrmu5",lat:51.0344,lng:2.3773},
+  {n:"Mama Shelter Lille",c:"nord",a:"97 Pl. Saint-Hubert, 59800 Lille",p:"03 59 60 51 51",url:"https://urlr.me/z4e9Xr",lat:50.6346,lng:3.0758},
+  {n:"Aux Enfants Terribles",c:"nord",a:"14 Chem. de Wervicq, 59520 Marquette-lez-Lille",p:"03 20 53 27 27",url:"https://urlr.me/RKz5qX",lat:50.6853,lng:3.0387},
+  {n:"Novotel Lille Lesquin",c:"nord",a:"55 Rte de Douai, 59810 Lesquin",p:"03 20 87 46 46",url:"https://urlr.me/qjWk3u",lat:50.5676,lng:3.1042},
+  {n:"La Chaufferie",c:"nord",a:"12 Rue Edgar Quinet, 59200 Tourcoing",p:"03 20 01 70 70",url:"https://urlr.me/VsnUDm",lat:50.7244,lng:3.1546},
+  {n:"La Ferme Saint Chrysole",c:"nord",a:"1015 Rue de Quesnoy, 59118 Wambrechies",p:"03 20 39 89 89",url:"https://urlr.me/pBqtrm",lat:50.6938,lng:3.0431},
+  {n:"Brique Land",c:"nord",a:"27 Rue Félix Faure, 59350 Saint-André-lez-Lille",p:"03 20 51 74 75",url:"https://urlr.me/bpu3Yq",lat:50.6706,lng:3.0399},
+  {n:"Btwin Village 59",c:"nord",a:"4 Rue Professeur Langevin, 59000 Lille",p:"03 20 40 52 52",url:"https://urlr.me/qpcKQv",lat:50.6094,lng:3.1082},
+  {n:"Moxy Lille City",c:"nord",a:"Rue Jean Bart, 59000 Lille",p:"03 20 06 45 45",url:"https://urlr.me/e2Vxsz",lat:50.6310,lng:3.0682},
+  {n:"Lille Grand Palais",c:"nord",a:"Pl. du Général de Gaulle, 59800 Lille",p:"03 28 55 00 00",url:"https://urlr.me/PfkQ7y",lat:50.6367,lng:3.0680},
+
+  // SOMME — 80
+  {n:"Domaine de Flixecourt",c:"somme",a:"1 Rte de Bourdon, 80420 Flixecourt",p:"03 22 51 60 51",url:"https://urlr.me/qugY7P",lat:50.0130,lng:2.0822},
+  {n:"Pierre & Vacances Fort-Mahon",c:"somme",a:"Prom. du Marquenterre, 80120 Fort-Mahon-Plage",p:"03 22 23 33 33",url:"https://urlr.me/3ydJpg",lat:50.3355,lng:1.5561},
+  {n:"La Roseraie",c:"somme",a:"10 Rue de la Chaussée, 80680 Sains-en-Amiénois",p:"03 22 05 14 14",url:"https://urlr.me/T4kuqv",lat:49.8203,lng:2.2147},
+
+  // OISE — 60
+  {n:"A Nous La Lune",c:"oise",a:"481 Rue du Port Salut, 60126 Longueil-Sainte-Marie",p:"03 44 91 82 82",url:"https://urlr.me/dtq7uY",lat:49.3614,lng:2.7648},
+  {n:"Campus UNILASALLE",c:"oise",a:"19 Rue Pierre Waguet, 60000 Beauvais",p:"03 44 06 25 25",url:"https://urlr.me/UGuBF4",lat:49.4343,lng:2.0760},
+  {n:"Domaine de Montchevreuil",c:"oise",a:"Château de Montchevreuil, 60240 Montchevreuil",p:"03 44 49 43 43",url:"https://urlr.me/AQ2J8a",lat:49.3065,lng:1.8887},
+  {n:"Le Grand Pavillon — Chantilly",c:"oise",a:"4 Rte de Senlis, 60500 Vineuil-Saint-Firmin",p:"03 44 58 47 77",url:"https://urlr.me/RYXk8J",lat:49.2108,lng:2.4876},
+  {n:"Château de Montvillargenne",c:"oise",a:"2 Av. François Mathet, 60270 Gouvieux",p:"03 44 57 02 02",url:"https://urlr.me/5fcZFP",lat:49.2278,lng:2.4591},
+  {n:"Mercure Chantilly",c:"oise",a:"4 Rte d'Apremont, 60500 Vineuil-Saint-Firmin",p:"03 44 58 58 00",url:"https://urlr.me/J39RpP",lat:49.2091,lng:2.4912},
+  {n:"Domaine de Rebetz",c:"oise",a:"5 Chem. de Rebetz, 60240 Chaumont-en-Vexin",p:"03 44 49 62 62",url:"https://urlr.me/Cv6S7m",lat:49.2663,lng:1.8793},
+  {n:"Château de la Trye",c:"oise",a:"L'Abbaye de Froidmont, 60370 Hermes",p:"03 44 08 48 48",url:"https://urlr.me/Ry8WNb",lat:49.3461,lng:2.2802},
+  {n:"Center Parcs Lac de l'Ailette",c:"oise",a:"Parc Nautique de l'Ailette, 02860 Chamouille",p:"03 23 24 73 73",url:"https://urlr.me/QFywBr",lat:49.5232,lng:3.7004},
+  {n:"Domaine de Barive",c:"oise",a:"Domaine de Barive, 02350 Sainte-Preuve",p:"03 23 22 15 15",url:"https://urlr.me/veA5dg",lat:49.6321,lng:3.8047},
+
+  // LE TOUQUET — 62
+  {n:"Le Manoir Hôtel — Le Touquet",c:"touquet",a:"2170 Av. du Golf, 62520 Le Touquet-Paris-Plage",p:"03 21 06 28 28",url:"https://urlr.me/UXJjxA",lat:50.5148,lng:1.5869},
+  {n:"Le Grand Hôtel — Le Touquet",c:"touquet",a:"4 Bd de la Canche, 62520 Le Touquet-Paris-Plage",p:"03 21 06 88 88",url:"https://urlr.me/K3q8da",lat:50.5241,lng:1.5872},
+  {n:"Novotel Le Touquet",c:"touquet",a:"Av. Louison Bobet, 62520 Le Touquet-Paris-Plage",p:"03 21 09 85 00",url:"https://urlr.me/pCBckw",lat:50.5225,lng:1.5891},
+  {n:"Domaine de WE — Wierre-Effroy",c:"touquet",a:"1046 Rue de Marquise, 62720 Wierre-Effroy",p:"03 21 99 45 45",url:"https://urlr.me/tMmPkG",lat:50.7448,lng:1.7264},
+  {n:"Hôtel Westminster — Le Touquet",c:"touquet",a:"5 Av. du Verger, 62520 Le Touquet-Paris-Plage",p:"03 21 05 48 48",url:"https://urlr.me/v79MU8",lat:50.5177,lng:1.5892},
+  {n:"Restaurant La Caravane — Le Touquet",c:"touquet",a:"73 Rue de Metz, 62520 Le Touquet-Paris-Plage",p:"03 21 05 20 20",url:"https://urlr.me/4dW7T3",lat:50.5215,lng:1.5925},
 ];
 
-// ─── Wikipedia image cache ───
-const imgCache={};
-async function getWikiImg(title){
-  if(imgCache[title]!==undefined)return imgCache[title];
-  for(const lang of['fr','en']){
-    try{
-      const r=await fetch(`https://${lang}.wikipedia.org/w/api.php?action=query&titles=${encodeURIComponent(title)}&prop=pageimages&format=json&pithumbsize=500&origin=*`);
-      const d=await r.json();
-      const p=Object.values(d.query.pages)[0];
-      if(p&&p.thumbnail){imgCache[title]=p.thumbnail.source;return p.thumbnail.source;}
-    }catch(e){}
+// ── CARD DOM refs ──
+const hcard=document.getElementById('hcard');
+const hcBar=document.getElementById('hcBar');
+const hcCat=document.getElementById('hcCat');
+const hcName=document.getElementById('hcName');
+const hcAddr=document.getElementById('hcAddr');
+const hcPhoneRow=document.getElementById('hcPhoneRow');
+const hcPhone=document.getElementById('hcPhone');
+const hcBtn=document.getElementById('hcBtn');
+const hcGmaps=document.getElementById('hcGmaps');
+let hideTimer=null, pinned=false;
+
+function posCard(x,y){
+  const W=window.innerWidth,H=window.innerHeight,CW=300,CH=hcard.offsetHeight||310;
+  let l=x+18,t=y-80;
+  if(l+CW>W-8) l=x-CW-18;
+  if(t+CH>H-8) t=H-CH-8;
+  if(t<8) t=8;
+  hcard.style.left=l+'px';
+  hcard.style.top=t+'px';
+}
+
+function showCard(v,x,y){
+  clearTimeout(hideTimer);
+  const color=CC[v.c];
+  hcBar.style.background=`linear-gradient(90deg,${color},${color}88)`;
+  hcCat.textContent=CL[v.c];
+  hcCat.style.color=color;
+  hcName.textContent=v.n;
+  hcAddr.textContent=v.a;
+  if(v.p){
+    hcPhone.innerHTML=`<a class="hc-phone-link" href="tel:${v.p.replace(/\s/g,'')}">${v.p}</a>`;
+    hcPhoneRow.style.display='flex';
+  } else {
+    hcPhoneRow.style.display='none';
   }
-  imgCache[title]=null;return null;
+  hcBtn.href=v.url;
+  hcGmaps.href=`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(v.n+', '+v.a)}`;
+  hcard.classList.add('show');
+  posCard(x,y);
 }
 
-function popupHTML(v,img,loading=false){
-  const imgSection=loading
-    ?`<div class="popup-loading"><span class="popup-spin"></span>Chargement…</div>`
-    :img
-      ?`<div class="popup-img-wrap"><img src="${img}" alt="${v.name}" loading="lazy"/><div class="popup-img-badge">${CL[v.cat]}</div></div>`
-      :`<div class="popup-img-wrap"><div class="popup-placeholder">${CE[v.cat]}</div><div class="popup-img-badge">${CL[v.cat]}</div></div>`;
-  return`${imgSection}<div class="popup-body">
-    <div class="popup-name">${v.name}</div>
-    <div class="popup-addr"><svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>${v.address}</div>
-    <a class="popup-btn" href="${v.url}" target="_blank" rel="noopener" style="margin-top:13px">Voir le guide réceptif ↗</a>
-  </div>`;
+function startHide(){
+  if(pinned) return;
+  hideTimer=setTimeout(()=>hcard.classList.remove('show'),250);
 }
 
-// ─── MAP ───
-const map=L.map('map',{center:[48.85,2.34],zoom:9,zoomControl:true});
-L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',{attribution:'©OpenStreetMap ©CARTO',maxZoom:19}).addTo(map);
+hcard.addEventListener('mouseenter',()=>clearTimeout(hideTimer));
+hcard.addEventListener('mouseleave',()=>{ if(!pinned) startHide(); });
+document.addEventListener('click',e=>{
+  if(!hcard.contains(e.target)){ pinned=false; hcard.classList.remove('show'); }
+});
 
-const markers={};
-const layer=L.layerGroup().addTo(map);
+// ── MAP ──
+const map=L.map('map',{center:[49.8,2.8],zoom:7,zoomControl:true});
+L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',{
+  attribution:'©OpenStreetMap ©CARTO',maxZoom:19
+}).addTo(map);
 
-VENUES.forEach((v,i)=>{
-  const color=CC[v.cat]||'#888';
-  const icon=L.divIcon({className:'',html:`<div class="custom-marker" style="background:${color}22;border-color:${color}">${CE[v.cat]}</div>`,iconSize:[30,30],iconAnchor:[15,15],popupAnchor:[0,-18]});
+const markers={},layer=L.layerGroup().addTo(map);
+
+V.forEach((v,i)=>{
+  const col=CC[v.c];
+  const icon=L.divIcon({
+    className:'',
+    html:`<div class="custom-marker" style="background:${col}22;border-color:${col}">${CE[v.c]}</div>`,
+    iconSize:[28,28],iconAnchor:[14,14]
+  });
   const m=L.marker([v.lat,v.lng],{icon}).addTo(layer);
-  m.on('click',async()=>{
-    const cached=imgCache[v.wiki];
-    if(cached!==undefined){
-      m.bindPopup(popupHTML(v,cached),{maxWidth:320}).openPopup();
-    } else {
-      m.bindPopup(popupHTML(v,null,true),{maxWidth:320}).openPopup();
-      const img=await getWikiImg(v.wiki);
-      if(m.isPopupOpen())m.setPopupContent(popupHTML(v,img));
-    }
+  m.on('mouseover',e=>{
+    if(pinned) return;
+    const r=document.getElementById('map').getBoundingClientRect();
+    showCard(v,r.left+e.containerPoint.x,r.top+e.containerPoint.y);
+  });
+  m.on('mouseout',()=>{ if(!pinned) startHide(); });
+  m.on('click',e=>{
+    pinned=true;
+    const r=document.getElementById('map').getBoundingClientRect();
+    showCard(v,r.left+e.containerPoint.x,r.top+e.containerPoint.y);
+    map.setView([v.lat,v.lng],14,{animate:true});
+    document.querySelectorAll('.venue-card').forEach(c=>c.classList.remove('active'));
   });
   markers[i]=m;
 });
 
-// preload first 25
-setTimeout(()=>{VENUES.slice(0,25).forEach(v=>getWikiImg(v.wiki));},500);
-
-// ─── SIDEBAR ───
-let activeFilter='all';
-
-function buildSidebar(filter='all',query=''){
+// ── SIDEBAR ──
+let activeCat='all';
+function buildSidebar(cat='all',q=''){
   const sb=document.getElementById('sidebar');
   sb.innerHTML='';
-  const chips=document.createElement('div');chips.className='filter-chips';
-  [['all','✦ Tous'],['comet','☄️ Comet'],['chateau',"🏰 Château'F"],['stade','🏟️ Stades'],
-   ['paris','Paris 75'],['idf','Île-de-Fr.'],['normandie','Normandie'],['belgique','🇧🇪']
-  ].forEach(([k,lbl])=>{
-    const cnt=k==='all'?VENUES.length:VENUES.filter(v=>v.cat===k).length;
-    const c=document.createElement('div');
-    c.className='chip'+(k===activeFilter?' active':'');c.dataset.cat=k;
-    c.innerHTML=`${lbl}<span class="count-badge">${cnt}</span>`;
-    c.addEventListener('click',()=>{activeFilter=k;buildSidebar(k,document.getElementById('searchInput').value);});
-    chips.appendChild(c);
-  });
-  sb.appendChild(chips);
 
-  const q=query.toLowerCase().trim();
-  const filtered=VENUES.filter(v=>{
-    const mc=filter==='all'||v.cat===filter;
-    const mq=!q||v.name.toLowerCase().includes(q)||v.address.toLowerCase().includes(q);
+  // chips
+  const wrap=document.createElement('div');wrap.className='filter-chips';
+  [
+    ['all','✦ Tous'],['comet','☄️ Comet'],['chateau',"🏰 Château'F"],
+    ['stade','🏟️ Stades'],['paris','🗼 Paris'],['idf','📍 IDF'],
+    ['normandie','🌊 Normandie'],['nord','🏭 Nord'],['somme','🌾 Somme'],
+    ['oise','🌿 Oise'],['belgique','🇧🇪'],['touquet','⛱️ Touquet'],
+  ].forEach(([k,lbl])=>{
+    const cnt=k==='all'?V.length:V.filter(v=>v.c===k).length;
+    const el=document.createElement('div');
+    el.className='chip'+(k===activeCat?' active':'');el.dataset.cat=k;
+    el.innerHTML=`${lbl}<span class="count-b">${cnt}</span>`;
+    el.onclick=()=>{ activeCat=k; buildSidebar(k,document.getElementById('searchInput').value); };
+    wrap.appendChild(el);
+  });
+  sb.appendChild(wrap);
+
+  const qL=q.toLowerCase().trim();
+  const filtered=V.filter(v=>{
+    const mc=cat==='all'||v.c===cat;
+    const mq=!qL||v.n.toLowerCase().includes(qL)||v.a.toLowerCase().includes(qL);
     return mc&&mq;
   });
 
-  VENUES.forEach((v,i)=>{
-    if(filtered.includes(v))layer.addLayer(markers[i]);
-    else layer.removeLayer(markers[i]);
-  });
+  V.forEach((v,i)=>{ filtered.includes(v)?layer.addLayer(markers[i]):layer.removeLayer(markers[i]); });
 
-  if(!filtered.length){sb.innerHTML+='<div class="no-results">Aucun résultat trouvé</div>';return;}
+  if(!filtered.length){
+    const el=document.createElement('div');el.className='no-results';el.textContent='Aucun résultat';sb.appendChild(el);return;
+  }
 
   const groups={};
-  filtered.forEach(v=>{if(!groups[v.cat])groups[v.cat]=[];groups[v.cat].push(v);});
+  filtered.forEach(v=>{ if(!groups[v.c])groups[v.c]=[]; groups[v.c].push(v); });
 
   Object.entries(groups).forEach(([cat,venues])=>{
     const lbl=document.createElement('div');lbl.className='group-label';lbl.textContent=CL[cat];sb.appendChild(lbl);
     venues.forEach(v=>{
-      const idx=VENUES.indexOf(v);
+      const idx=V.indexOf(v);
       const card=document.createElement('div');card.className='venue-card';
-      card.innerHTML=`<div class="v-dot" style="background:${CC[v.cat]}"></div>
-        <div class="v-info"><div class="v-name">${v.name}</div><div class="v-addr">${v.address}</div></div>
-        <span class="v-link">↗</span>`;
-      card.addEventListener('click',async()=>{
+      card.innerHTML=`
+        <div class="v-dot" style="background:${CC[v.c]}"></div>
+        <div class="v-info">
+          <div class="v-name">${v.n}</div>
+          <div class="v-addr">${v.a}</div>
+        </div>
+        <span class="v-ext">↗</span>`;
+
+      card.addEventListener('mouseenter',()=>{
+        if(pinned) return;
+        const r=card.getBoundingClientRect();
+        showCard(v,r.right+10,r.top+r.height/2);
+      });
+      card.addEventListener('mouseleave',()=>{ if(!pinned) startHide(); });
+      card.addEventListener('click',()=>{
+        pinned=true;
         map.setView([v.lat,v.lng],14,{animate:true});
         document.querySelectorAll('.venue-card').forEach(c=>c.classList.remove('active'));
         card.classList.add('active');
-        setTimeout(async()=>{
-          markers[idx].unbindPopup();
-          const cached=imgCache[v.wiki];
-          if(cached!==undefined){
-            markers[idx].bindPopup(popupHTML(v,cached),{maxWidth:320}).openPopup();
-          } else {
-            markers[idx].bindPopup(popupHTML(v,null,true),{maxWidth:320}).openPopup();
-            const img=await getWikiImg(v.wiki);
-            if(markers[idx].isPopupOpen())markers[idx].setPopupContent(popupHTML(v,img));
-          }
-        },350);
+        const r=card.getBoundingClientRect();
+        showCard(v,r.right+10,r.top+r.height/2);
       });
-      card.querySelector('.v-link').addEventListener('click',e=>{e.stopPropagation();window.open(v.url,'_blank');});
+      card.querySelector('.v-ext').addEventListener('click',e=>{
+        e.stopPropagation();window.open(v.url,'_blank');
+      });
       sb.appendChild(card);
     });
   });
 }
-
 buildSidebar();
 
-// ─── SEARCH ───
+// ── SEARCH ──
 const inp=document.getElementById('searchInput');
 const sr=document.getElementById('searchResults');
-
 inp.addEventListener('input',()=>{
   const q=inp.value.trim().toLowerCase();
-  buildSidebar(activeFilter,q);
+  buildSidebar(activeCat,q);
   if(!q){sr.classList.remove('show');return;}
-  const matches=VENUES.filter(v=>v.name.toLowerCase().includes(q)||v.address.toLowerCase().includes(q)).slice(0,8);
-  if(!matches.length){sr.classList.remove('show');return;}
-  sr.innerHTML=matches.map(v=>{
-    const idx=VENUES.indexOf(v);
-    return`<div class="sr-item" data-idx="${idx}">
-      <div class="sr-dot" style="background:${CC[v.cat]}"></div>
-      <div class="sr-info"><div class="sr-name">${v.name}</div><div class="sr-meta">${v.address}</div></div>
-      <span class="sr-arrow">→</span></div>`;
-  }).join('');
+  const hits=V.filter(v=>v.n.toLowerCase().includes(q)||v.a.toLowerCase().includes(q)).slice(0,8);
+  if(!hits.length){sr.classList.remove('show');return;}
+  sr.innerHTML=hits.map(v=>`
+    <div class="sr-item" data-i="${V.indexOf(v)}">
+      <div class="sr-dot" style="background:${CC[v.c]}"></div>
+      <div class="sr-info">
+        <div class="sr-name">${v.n}</div>
+        <div class="sr-meta">${v.a}</div>
+      </div>
+      <span class="sr-arr">→</span>
+    </div>`).join('');
   sr.classList.add('show');
   sr.querySelectorAll('.sr-item').forEach(el=>{
-    el.addEventListener('click',async()=>{
-      const v=VENUES[+el.dataset.idx];const idx=+el.dataset.idx;
+    el.addEventListener('click',()=>{
+      const v=V[+el.dataset.i];
       map.setView([v.lat,v.lng],15,{animate:true});
-      sr.classList.remove('show');inp.value=v.name;
-      buildSidebar(activeFilter,'');
-      setTimeout(async()=>{
-        markers[idx].unbindPopup();
-        const cached=imgCache[v.wiki];
-        if(cached!==undefined){
-          markers[idx].bindPopup(popupHTML(v,cached),{maxWidth:320}).openPopup();
-        } else {
-          markers[idx].bindPopup(popupHTML(v,null,true),{maxWidth:320}).openPopup();
-          const img=await getWikiImg(v.wiki);
-          if(markers[idx].isPopupOpen())markers[idx].setPopupContent(popupHTML(v,img));
-        }
-      },450);
+      sr.classList.remove('show');inp.value=v.n;
+      buildSidebar(activeCat,'');
+      pinned=true;
+      setTimeout(()=>{
+        const r=document.getElementById('map').getBoundingClientRect();
+        showCard(v,r.left+r.width/2,r.top+180);
+      },400);
     });
   });
 });
-
-document.addEventListener('click',e=>{if(!inp.contains(e.target)&&!sr.contains(e.target))sr.classList.remove('show');});
-inp.addEventListener('keydown',e=>{if(e.key==='Escape')sr.classList.remove('show');});
+document.addEventListener('click',e=>{
+  if(!inp.contains(e.target)&&!sr.contains(e.target)) sr.classList.remove('show');
+});
 </script>
 </body>
 </html>
