@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>2ISD — Outils Opérationnels</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+  :root{
+    --black:#0e0e0e;
+    --yellow:#FFD600;
+    --yellow-dim:#b89e00;
+    --white:#ffffff;
+    --gray:#f4f4f2;
+    --muted:#888;
+    --border:#e0e0e0;
+  }
+
+  html{scroll-behavior:smooth;}
+  body{
+    font-family:'Outfit',sans-serif;
+    background:var(--black);
+    color:var(--white);
+    min-height:100vh;
+    display:flex;
+    flex-direction:column;
+  }
+
+  /* ─── HEADER ─── */
+  header{
+    padding:28px 48px 24px;
+    display:flex;
+    align-items:flex-end;
+    gap:24px;
+    border-bottom:1px solid #222;
+    position:relative;
+  }
+  header::after{
+    content:'';
+    position:absolute;
+    bottom:-1px;left:48px;
+    width:80px;height:3px;
+    background:var(--yellow);
+  }
+  .logo{
+    font-family:'Bebas Neue',sans-serif;
+    font-size:72px;
+    color:var(--yellow);
+    line-height:1;
+    letter-spacing:6px;
+  }
+  .logo span{color:var(--white);}
+  .header-info{padding-bottom:8px;}
+  .header-info h1{
+    font-family:'Bebas Neue',sans-serif;
+    font-size:20px;
+    letter-spacing:4px;
+    color:var(--white);
+    text-transform:uppercase;
+  }
+  .header-info p{
+    font-size:12px;
+    color:var(--muted);
+    letter-spacing:1.5px;
+    margin-top:3px;
+  }
+
+  /* ─── HERO ─── */
+  .hero{
+    padding:64px 48px 48px;
+    max-width:640px;
+  }
+  .hero-label{
+    font-size:11px;
+    letter-spacing:3px;
+    text-transform:uppercase;
+    color:var(--yellow);
+    margin-bottom:14px;
+  }
+  .hero h2{
+    font-family:'Bebas Neue',sans-serif;
+    font-size:52px;
+    letter-spacing:3px;
+    line-height:1.05;
+    color:var(--white);
+    margin-bottom:18px;
+  }
+  .hero p{
+    font-size:15px;
+    color:#aaa;
+    line-height:1.7;
+    font-weight:300;
+  }
+
+  /* ─── GRID ─── */
+  .tools-section{
+    padding:0 48px 80px;
+    flex:1;
+  }
+  .section-label{
+    font-size:11px;
+    letter-spacing:3px;
+    text-transform:uppercase;
+    color:var(--muted);
+    margin-bottom:28px;
+    display:flex;
+    align-items:center;
+    gap:14px;
+  }
+  .section-label::after{
+    content:'';
+    flex:1;
+    height:1px;
+    background:#222;
+  }
+
+  .tools-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(300px,1fr));
+    gap:20px;
+  }
+
+  .tool-card{
+    background:#161616;
+    border:1px solid #222;
+    border-radius:4px;
+    padding:32px;
+    text-decoration:none;
+    color:inherit;
+    display:flex;
+    flex-direction:column;
+    gap:20px;
+    position:relative;
+    overflow:hidden;
+    transition:border-color .25s, transform .25s, box-shadow .25s;
+  }
+  .tool-card::before{
+    content:'';
+    position:absolute;
+    top:0;left:0;right:0;
+    height:3px;
+    background:var(--yellow);
+    transform:scaleX(0);
+    transform-origin:left;
+    transition:transform .3s ease;
+  }
+  .tool-card:hover{
+    border-color:#333;
+    transform:translateY(-4px);
+    box-shadow:0 20px 60px rgba(0,0,0,.5);
+  }
+  .tool-card:hover::before{
+    transform:scaleX(1);
+  }
+
+  .tool-icon{
+    width:48px;height:48px;
+    background:#1e1e1e;
+    border:1px solid #2a2a2a;
+    border-radius:3px;
+    display:flex;align-items:center;justify-content:center;
+    font-size:22px;
+    transition:background .25s;
+  }
+  .tool-card:hover .tool-icon{
+    background:#252500;
+    border-color:var(--yellow-dim);
+  }
+
+  .tool-body{flex:1;}
+  .tool-num{
+    font-size:11px;
+    color:var(--muted);
+    letter-spacing:2px;
+    margin-bottom:10px;
+  }
+  .tool-title{
+    font-family:'Bebas Neue',sans-serif;
+    font-size:26px;
+    letter-spacing:2.5px;
+    color:var(--white);
+    margin-bottom:10px;
+    line-height:1.1;
+  }
+  .tool-desc{
+    font-size:13px;
+    color:#888;
+    line-height:1.65;
+    font-weight:300;
+  }
+
+  .tool-tags{
+    display:flex;
+    flex-wrap:wrap;
+    gap:6px;
+  }
+  .tag{
+    font-size:10px;
+    letter-spacing:1.5px;
+    text-transform:uppercase;
+    color:#555;
+    background:#1e1e1e;
+    border:1px solid #2a2a2a;
+    padding:3px 10px;
+    border-radius:2px;
+  }
+
+  .tool-cta{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    font-size:12px;
+    font-weight:600;
+    letter-spacing:2px;
+    text-transform:uppercase;
+    color:var(--yellow);
+    opacity:0;
+    transform:translateX(-6px);
+    transition:opacity .25s, transform .25s;
+  }
+  .tool-card:hover .tool-cta{
+    opacity:1;
+    transform:translateX(0);
+  }
+  .tool-cta svg{transition:transform .2s;}
+  .tool-card:hover .tool-cta svg{transform:translateX(4px);}
+
+  /* ─── FOOTER ─── */
+  footer{
+    border-top:1px solid #1a1a1a;
+    padding:20px 48px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    flex-wrap:wrap;
+    gap:12px;
+  }
+  footer p{font-size:11px;color:#444;letter-spacing:1px;}
+  .footer-logo{
+    font-family:'Bebas Neue',sans-serif;
+    font-size:22px;
+    color:#333;
+    letter-spacing:4px;
+  }
+  .footer-logo span{color:#444;}
+
+  /* ─── ANIMATIONS ─── */
+  @keyframes fadeUp{
+    from{opacity:0;transform:translateY(20px);}
+    to{opacity:1;transform:translateY(0);}
+  }
+  .hero{animation:fadeUp .6s ease both;}
+  .section-label{animation:fadeUp .6s .1s ease both;}
+  .tool-card:nth-child(1){animation:fadeUp .6s .15s ease both;}
+  .tool-card:nth-child(2){animation:fadeUp .6s .25s ease both;}
+  .tool-card:nth-child(3){animation:fadeUp .6s .35s ease both;}
+
+  @media(max-width:640px){
+    header{padding:20px 24px 18px;}
+    .logo{font-size:52px;}
+    .hero{padding:40px 24px 32px;}
+    .tools-section{padding:0 24px 60px;}
+    footer{padding:16px 24px;}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">2I<span>SD</span></div>
+  <div class="header-info">
+    <h1>Outils Opérationnels</h1>
+    <p>Plateforme interne — Accès aux configurateurs</p>
+  </div>
+</header>
+
+<section class="hero">
+  <p class="hero-label">Bienvenue</p>
+  <h2>Vos 3 outils<br>en un seul endroit</h2>
+  <p>Accédez rapidement à l'ensemble des configurateurs et calculateurs opérationnels 2ISD. Sélectionnez l'outil correspondant à votre besoin.</p>
+</section>
+
+<section class="tools-section">
+  <p class="section-label">Outils disponibles</p>
+  <div class="tools-grid">
+
+    <!-- Outil 1 -->
+    <a class="tool-card" href="calculateur_trajets_v13.html">
+      <div class="tool-icon">🗺️</div>
+      <div class="tool-body">
+        <p class="tool-num">OUTIL 01</p>
+        <h3 class="tool-title">Planificateur de Prestation</h3>
+        <p class="tool-desc">Calcul des trajets, distances et coûts de déplacement pour l'organisation de vos prestations terrain.</p>
+      </div>
+      <div class="tool-tags">
+        <span class="tag">Trajets</span>
+        <span class="tag">Cartographie</span>
+        <span class="tag">Calcul</span>
+      </div>
+      <div class="tool-cta">
+        Accéder
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </div>
+    </a>
+
+    <!-- Outil 2 -->
+    <a class="tool-card" href="guides-receptifs_référencés_v3.html">
+      <div class="tool-icon">🧭</div>
+      <div class="tool-body">
+        <p class="tool-num">OUTIL 02</p>
+        <h3 class="tool-title">Guides Réceptifs</h3>
+        <p class="tool-desc">Carte interactive des guides réceptifs référencés. Visualisation et filtrage géographique de votre réseau.</p>
+      </div>
+      <div class="tool-tags">
+        <span class="tag">Guides</span>
+        <span class="tag">Carte</span>
+        <span class="tag">Réseau</span>
+      </div>
+      <div class="tool-cta">
+        Accéder
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </div>
+    </a>
+
+    <!-- Outil 3 -->
+    <a class="tool-card" href="préconisation_activité_v15.html">
+      <div class="tool-icon">⚙️</div>
+      <div class="tool-body">
+        <p class="tool-num">OUTIL 03</p>
+        <h3 class="tool-title">Configurateur d'Activités</h3>
+        <p class="tool-desc">Préconisation et configuration des activités selon les critères du groupe. Génération de programmes personnalisés.</p>
+      </div>
+      <div class="tool-tags">
+        <span class="tag">Activités</span>
+        <span class="tag">Configuration</span>
+        <span class="tag">Programme</span>
+      </div>
+      <div class="tool-cta">
+        Accéder
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </div>
+    </a>
+
+  </div>
+</section>
+
+<footer>
+  <p>© 2025 2ISD — Usage interne uniquement</p>
+  <div class="footer-logo">2I<span>SD</span></div>
+</footer>
+
+</body>
+</html>
