@@ -777,6 +777,8 @@ const LE_BASE='https://2isd.lab-event.com';
 const LE_DEPART='171 avenue des longues pièces, 62331 Coquelles';
 let leEvents=[];
 let leActiveId=null;
+// Sanitize strings for safe HTML injection
+function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');}
 
 // Restore saved token
 (function(){
@@ -829,7 +831,10 @@ async function leLoad(){
       withProducts:1,asTree:1,
       startDate:start||undefined,endDate:end||undefined
     });
-    leEvents=Array.isArray(data)?data:(data.data||data.events||[]);
+    console.log('RAW Lab Event response:', JSON.stringify(data).slice(0,3000));
+    const rawList=Array.isArray(data)?data:(data.data||data.events||data.results||data.items||[]);
+    leEvents=rawList;
+    if(rawList.length>0)console.log('PREMIER evenement:', JSON.stringify(rawList[0]).slice(0,2000));
     leRenderList();
   }catch(e){
     document.getElementById('leList').innerHTML='<div class="ev-empty" style="color:var(--red)">❌ '+e.message+'</div>';
@@ -850,10 +855,10 @@ function leRenderList(){
     const client=ev.client_name||ev.client||ev.society||'';
     const products=ev.products||[];
     const isRef=leCheckVenueRef(ev);
-    return`<div class="le-item${ev.id===leActiveId?' active':''}" onclick="leShowDetail(${ev.id})">
+    return`<div class="le-item${ev.id===leActiveId?' active':''}" data-leid="${ev.id}" onclick="leShowDetail(this.dataset.leid)">
       <div class="le-item-date">${d}</div>
-      <div class="le-item-name">${name}</div>
-      <div class="le-item-meta">${[client,products.length?products.length+' produit(s)':''].filter(Boolean).join(' · ')}</div>
+      <div class="le-item-name">${esc(name)}</div>
+      <div class="le-item-meta">${esc([client,products.length?products.length+' produit(s)':''].filter(Boolean).join(' · '))}</div>
       <div class="le-item-tags">
         <span class="badge badge-crm">CRM</span>
         ${isRef?'<span class="badge badge-venue">✅ Réceptif</span>':''}
@@ -872,9 +877,10 @@ function leCheckVenueRef(ev){
 }
 
 async function leShowDetail(id){
+  id=isNaN(id)?id:parseInt(id,10);
   leActiveId=id;
   leRenderList();
-  const ev=leEvents.find(e=>e.id===id);
+  const ev=leEvents.find(e=>e.id===id||String(e.id)===String(id));
   if(!ev)return;
 
   const detail=document.getElementById('leDetail');
@@ -884,20 +890,24 @@ async function leShowDetail(id){
   let locations=[];
   try{
     const locData=await leApiFetch('/api/v3/events/locations/'+id);
+    console.log('LOCATIONS raw:', JSON.stringify(locData).slice(0,1000));
     locations=locData._payload||locData.data||locData||[];
-  }catch(e){/* optional */}
+  }catch(e){console.warn('Locations error:',e);}
 
-  const name=ev.event_name||ev.name||ev.title||'Sans nom';
+  // Log full event structure
+  console.log('EVENT DETAIL:', JSON.stringify(ev).slice(0,3000));
+
+  const name=esc(ev.event_name||ev.name||ev.title||'Sans nom');
   const rawDate=ev.date_from||ev.start_date||ev.date||'';
   const dateEnd=ev.date_to||ev.end_date||'';
   const d=rawDate?new Date(rawDate).toLocaleDateString('fr-FR',{weekday:'long',day:'2-digit',month:'long',year:'numeric'}):'—';
-  const client=ev.client_name||ev.client||ev.society||'—';
+  const client=esc(ev.client_name||ev.client||ev.society||'—');
   const products=ev.products||[];
 
   // Determine main venue
   const mainLoc=locations[0]||{};
-  const lieuName=mainLoc.name||ev.venue?.name||ev.location||'';
-  const lieuAddr=mainLoc.address||ev.venue?.address||'';
+  const lieuName=esc(mainLoc.name||ev.venue?.name||ev.location||'');
+  const lieuAddr=esc(mainLoc.address||ev.venue?.address||'');
   const lieuLat=mainLoc.latitude||ev.venue?.latitude||null;
   const lieuLng=mainLoc.longitude||ev.venue?.longitude||null;
 
@@ -927,9 +937,9 @@ async function leShowDetail(id){
       <div class="ev-section-hdr"><span class="sec-icon">📦</span><h3>Produits / Prestations</h3><span class="sec-badge badge badge-crm">${products.length} produit(s)</span></div>
       <div class="ev-section-body" style="padding:8px 18px">
         ${products.map(p=>{
-          const pname=p.name||p.product_name||p.title||'—';
-          const ptype=p.type||p.category||'';
-          const ptime=p.start_time||p.time_from||'';
+          const pname=esc(p.name||p.product_name||p.title||'—');
+          const ptype=esc(p.type||p.category||'');
+          const ptime=esc(p.start_time||p.time_from||'');
           const pmatch=VENUES.find(v=>(pname+' '+(p.location||'')).toLowerCase().includes(v.name.toLowerCase().slice(0,8)));
           return`<div class="prod-row">
             <div class="prod-name">${pname}${ptype?` <span style="color:var(--muted2);font-size:11px">(${ptype})</span>`:''}</div>
@@ -972,7 +982,7 @@ async function leShowDetail(id){
         </div>
       </div>
       <div class="ev-actions">
-        <button class="btn-icon" onclick="leImportOne(${id})" title="Importer dans Événements" style="color:var(--yellow)">⬇️</button>
+        <button class="btn-icon" data-leid="${id}" onclick="leImportOne(this.dataset.leid)" title="Importer dans Événements" style="color:var(--yellow)">⬇️</button>
       </div>
     </div>
 
@@ -1051,7 +1061,8 @@ function leGeneratePlanning(ev,products,rawDate){
 }
 
 async function leImportOne(id){
-  const ev=leEvents.find(e=>e.id===id);
+  id=isNaN(id)?id:parseInt(id,10);
+  const ev=leEvents.find(e=>e.id===id||String(e.id)===String(id));
   if(!ev)return;
   let locations=[];
   try{const ld=await leApiFetch('/api/v3/events/locations/'+id);locations=ld._payload||ld.data||ld||[];}catch(e){}
@@ -1090,7 +1101,7 @@ async function leImportAll(){
   let count=0;
   for(const ev of leEvents){
     const existing=events.find(e=>e.notes&&e.notes.includes('ID: '+ev.id));
-    if(!existing){await leImportOne(ev.id);count++;}
+    if(!existing){await leImportOne(String(ev.id));count++;}
   }
   showToast(count+' événement(s) importé(s) ✓','success');
 }
