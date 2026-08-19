@@ -826,7 +826,7 @@ async function leLoad(){
   const end=document.getElementById('leEnd').value;
   try{
     const data=await leApiFetch('/api/v3/events/listing',{
-      withProducts:true,asTree:true,
+      withProducts:1,asTree:1,
       startDate:start||undefined,endDate:end||undefined
     });
     leEvents=Array.isArray(data)?data:(data.data||data.events||[]);
