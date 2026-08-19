@@ -843,28 +843,56 @@ async function leLoad(){
 
 function leRenderList(){
   const list=document.getElementById('leList');
+  list.innerHTML='';
   if(!leEvents.length){
     list.innerHTML='<div class="ev-empty"><div class="ev-empty-icon">📭</div><p>Aucun événement trouvé sur cette période.</p></div>';
     return;
   }
   const sorted=[...leEvents].sort((a,b)=>new Date(a.date_from||a.start_date||0)-new Date(b.date_from||b.start_date||0));
-  list.innerHTML=sorted.map(ev=>{
+  sorted.forEach(ev=>{
     const rawDate=ev.date_from||ev.start_date||ev.date||'';
     const d=rawDate?new Date(rawDate).toLocaleDateString('fr-FR',{day:'2-digit',month:'short',year:'numeric'}):'—';
     const name=ev.event_name||ev.name||ev.title||'Sans nom';
     const client=ev.client_name||ev.client||ev.society||'';
     const products=ev.products||[];
     const isRef=leCheckVenueRef(ev);
-    return`<div class="le-item${ev.id===leActiveId?' active':''}" data-leid="${ev.id}" onclick="leShowDetail(this.dataset.leid)">
-      <div class="le-item-date">${d}</div>
-      <div class="le-item-name">${esc(name)}</div>
-      <div class="le-item-meta">${esc([client,products.length?products.length+' produit(s)':''].filter(Boolean).join(' · '))}</div>
-      <div class="le-item-tags">
-        <span class="badge badge-crm">CRM</span>
-        ${isRef?'<span class="badge badge-venue">✅ Réceptif</span>':''}
-      </div>
-    </div>`;
-  }).join('');
+
+    const div=document.createElement('div');
+    div.className='le-item'+(String(ev.id)===String(leActiveId)?' active':'');
+    div.dataset.leid=String(ev.id);
+
+    const dateEl=document.createElement('div');
+    dateEl.className='le-item-date';
+    dateEl.textContent=d;
+
+    const nameEl=document.createElement('div');
+    nameEl.className='le-item-name';
+    nameEl.textContent=name;
+
+    const metaEl=document.createElement('div');
+    metaEl.className='le-item-meta';
+    metaEl.textContent=[client,products.length?products.length+' produit(s)':''].filter(Boolean).join(' · ');
+
+    const tagsEl=document.createElement('div');
+    tagsEl.className='le-item-tags';
+    const crmBadge=document.createElement('span');
+    crmBadge.className='badge badge-crm';
+    crmBadge.textContent='CRM';
+    tagsEl.appendChild(crmBadge);
+    if(isRef){
+      const refBadge=document.createElement('span');
+      refBadge.className='badge badge-venue';
+      refBadge.textContent='✅ Réceptif';
+      tagsEl.appendChild(refBadge);
+    }
+
+    div.appendChild(dateEl);
+    div.appendChild(nameEl);
+    div.appendChild(metaEl);
+    div.appendChild(tagsEl);
+    div.addEventListener('click',()=>leShowDetail(String(ev.id)));
+    list.appendChild(div);
+  });
 }
 
 function leCheckVenueRef(ev){
@@ -877,11 +905,12 @@ function leCheckVenueRef(ev){
 }
 
 async function leShowDetail(id){
-  id=isNaN(id)?id:parseInt(id,10);
-  leActiveId=id;
+  try{
+  leActiveId=String(id);
   leRenderList();
-  const ev=leEvents.find(e=>e.id===id||String(e.id)===String(id));
-  if(!ev)return;
+  const ev=leEvents.find(e=>String(e.id)===String(id));
+  console.log('leShowDetail called, id=',id,'ev found=',!!ev);
+  if(!ev){console.error('Event not found for id',id,'available ids:',leEvents.map(e=>e.id));return;}
 
   const detail=document.getElementById('leDetail');
   detail.innerHTML='<div class="le-detail-empty"><span class="spin" style="width:24px;height:24px;border-width:3px"></span><p style="margin-top:14px">Génération du planning…</p></div>';
@@ -889,7 +918,7 @@ async function leShowDetail(id){
   // Fetch locations for this event
   let locations=[];
   try{
-    const locData=await leApiFetch('/api/v3/events/locations/'+id);
+    const locData=await leApiFetch('/api/v3/events/locations/'+String(id));
     console.log('LOCATIONS raw:', JSON.stringify(locData).slice(0,1000));
     locations=locData._payload||locData.data||locData||[];
   }catch(e){console.warn('Locations error:',e);}
@@ -1016,6 +1045,7 @@ async function leShowDetail(id){
   // Load weather
   const fakeEv={date:rawDate?rawDate.slice(0,10):'',heure:planning.find(p=>p.label.includes('Prestation'))?.time||'',lieu:lieuAddr||lieuName,lat:lieuLat,lng:lieuLng};
   loadWeather(fakeEv,wid);
+  }catch(err){console.error('leShowDetail error:',err);document.getElementById('leDetail').innerHTML='<div class="le-detail-empty"><div class="icon">❌</div><p>Erreur: '+err.message+'</p></div>';}
 }
 
 function leGeneratePlanning(ev,products,rawDate){
@@ -1061,8 +1091,7 @@ function leGeneratePlanning(ev,products,rawDate){
 }
 
 async function leImportOne(id){
-  id=isNaN(id)?id:parseInt(id,10);
-  const ev=leEvents.find(e=>e.id===id||String(e.id)===String(id));
+  const ev=leEvents.find(e=>String(e.id)===String(id));
   if(!ev)return;
   let locations=[];
   try{const ld=await leApiFetch('/api/v3/events/locations/'+id);locations=ld._payload||ld.data||ld||[];}catch(e){}
