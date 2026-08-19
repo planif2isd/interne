@@ -3,352 +3,1097 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>2ISD — Outils Opérationnels</title>
+<title>2ISD — Plateforme Opérationnelle</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
-  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
-  :root{
-    --black:#0e0e0e;
-    --yellow:#FFD600;
-    --yellow-dim:#b89e00;
-    --white:#ffffff;
-    --gray:#f4f4f2;
-    --muted:#888;
-    --border:#e0e0e0;
-  }
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --black:#0e0e0e;--surface:#141414;--card:#1a1a1a;--card2:#202020;
+  --border:#2a2a2a;--border2:#333;
+  --yellow:#FFD600;--yellow-dim:#b89e00;--yellow-bg:rgba(255,214,0,.07);
+  --white:#fff;--muted:#777;--muted2:#555;
+  --green:#22c55e;--green-bg:rgba(34,197,94,.1);
+  --red:#ef4444;--red-bg:rgba(239,68,68,.1);
+  --blue:#3b82f6;--blue-bg:rgba(59,130,246,.1);
+  --radius:6px;
+}
+html{scroll-behavior:smooth;}
+body{font-family:'Outfit',sans-serif;background:var(--black);color:var(--white);min-height:100vh;display:flex;flex-direction:column;}
+::-webkit-scrollbar{width:4px;}
+::-webkit-scrollbar-thumb{background:#333;border-radius:4px;}
 
-  html{scroll-behavior:smooth;}
-  body{
-    font-family:'Outfit',sans-serif;
-    background:var(--black);
-    color:var(--white);
-    min-height:100vh;
-    display:flex;
-    flex-direction:column;
-  }
+/* HEADER */
+.hdr{padding:0 40px;height:64px;display:flex;align-items:center;gap:24px;border-bottom:1px solid var(--border);position:sticky;top:0;z-index:200;background:var(--black);}
+.logo{font-family:'Bebas Neue',sans-serif;font-size:48px;color:var(--yellow);letter-spacing:5px;line-height:1;}
+.logo span{color:#fff;}
+.hdr-sep{width:1px;height:28px;background:var(--border2);}
+.hdr-title{font-size:12px;font-weight:600;letter-spacing:2.5px;text-transform:uppercase;color:var(--muted);}
+.hdr-nav{margin-left:auto;display:flex;gap:4px;}
+.nav-btn{padding:6px 14px;border-radius:var(--radius);border:1px solid var(--border);background:transparent;color:var(--muted);font-family:'Outfit',sans-serif;font-size:12px;font-weight:500;letter-spacing:1px;cursor:pointer;text-transform:uppercase;transition:all .2s;}
+.nav-btn:hover{color:var(--white);border-color:var(--border2);}
+.nav-btn.active{background:var(--yellow);color:var(--black);border-color:var(--yellow);font-weight:700;}
 
-  /* ─── HEADER ─── */
-  header{
-    padding:28px 48px 24px;
-    display:flex;
-    align-items:flex-end;
-    gap:24px;
-    border-bottom:1px solid #222;
-    position:relative;
-  }
-  header::after{
-    content:'';
-    position:absolute;
-    bottom:-1px;left:48px;
-    width:80px;height:3px;
-    background:var(--yellow);
-  }
-  .logo{
-    font-family:'Bebas Neue',sans-serif;
-    font-size:72px;
-    color:var(--yellow);
-    line-height:1;
-    letter-spacing:6px;
-  }
-  .logo span{color:var(--white);}
-  .header-info{padding-bottom:8px;}
-  .header-info h1{
-    font-family:'Bebas Neue',sans-serif;
-    font-size:20px;
-    letter-spacing:4px;
-    color:var(--white);
-    text-transform:uppercase;
-  }
-  .header-info p{
-    font-size:12px;
-    color:var(--muted);
-    letter-spacing:1.5px;
-    margin-top:3px;
-  }
+/* TABS */
+.tab{display:none;flex:1;flex-direction:column;}
+.tab.active{display:flex;}
 
-  /* ─── HERO ─── */
-  .hero{
-    padding:64px 48px 48px;
-    max-width:640px;
-  }
-  .hero-label{
-    font-size:11px;
-    letter-spacing:3px;
-    text-transform:uppercase;
-    color:var(--yellow);
-    margin-bottom:14px;
-  }
-  .hero h2{
-    font-family:'Bebas Neue',sans-serif;
-    font-size:52px;
-    letter-spacing:3px;
-    line-height:1.05;
-    color:var(--white);
-    margin-bottom:18px;
-  }
-  .hero p{
-    font-size:15px;
-    color:#aaa;
-    line-height:1.7;
-    font-weight:300;
-  }
+/* TAB ACCUEIL */
+.home-hero{padding:48px 40px 32px;}
+.hero-label{font-size:11px;letter-spacing:3px;color:var(--yellow);text-transform:uppercase;margin-bottom:12px;}
+.hero-title{font-family:'Bebas Neue',sans-serif;font-size:48px;letter-spacing:3px;line-height:1.05;margin-bottom:14px;}
+.hero-sub{font-size:14px;color:var(--muted);font-weight:300;line-height:1.7;}
+.tools-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;padding:0 40px 48px;}
+.tool-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:28px;text-decoration:none;color:inherit;display:flex;flex-direction:column;gap:16px;position:relative;overflow:hidden;transition:all .25s;}
+.tool-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--yellow);transform:scaleX(0);transform-origin:left;transition:transform .3s;}
+.tool-card:hover{border-color:var(--border2);transform:translateY(-3px);box-shadow:0 16px 48px rgba(0,0,0,.5);}
+.tool-card:hover::before{transform:scaleX(1);}
+.tool-icon{width:44px;height:44px;background:var(--card2);border:1px solid var(--border2);border-radius:var(--radius);display:flex;align-items:center;justify-content:center;font-size:20px;}
+.tool-num{font-size:10px;color:var(--muted2);letter-spacing:2px;}
+.tool-title{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:2px;color:var(--white);line-height:1.1;}
+.tool-desc{font-size:12px;color:var(--muted);line-height:1.6;font-weight:300;flex:1;}
+.tool-tags{display:flex;flex-wrap:wrap;gap:5px;}
+.tag{font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--muted2);background:var(--card2);border:1px solid var(--border2);padding:2px 8px;border-radius:2px;}
+.tool-arrow{font-size:11px;font-weight:700;letter-spacing:2px;color:var(--yellow);opacity:0;transition:opacity .2s;}
+.tool-card:hover .tool-arrow{opacity:1;}
 
-  /* ─── GRID ─── */
-  .tools-section{
-    padding:0 48px 80px;
-    flex:1;
-  }
-  .section-label{
-    font-size:11px;
-    letter-spacing:3px;
-    text-transform:uppercase;
-    color:var(--muted);
-    margin-bottom:28px;
-    display:flex;
-    align-items:center;
-    gap:14px;
-  }
-  .section-label::after{
-    content:'';
-    flex:1;
-    height:1px;
-    background:#222;
-  }
+/* TAB EVENEMENTS */
+.events-layout{display:grid;grid-template-columns:380px 1fr;flex:1;min-height:0;overflow:hidden;}
+.events-sidebar{background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden;}
+.ev-sidebar-hdr{padding:20px 20px 16px;border-bottom:1px solid var(--border);flex-shrink:0;}
+.ev-sidebar-hdr h2{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:2px;margin-bottom:12px;}
+.btn-new{width:100%;padding:10px;background:var(--yellow);color:var(--black);border:none;border-radius:var(--radius);font-family:'Outfit',sans-serif;font-size:13px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;transition:opacity .2s;}
+.btn-new:hover{opacity:.88;}
+.ev-list{flex:1;overflow-y:auto;padding:12px;}
+.ev-item{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;margin-bottom:8px;cursor:pointer;transition:all .2s;}
+.ev-item:hover{border-color:var(--border2);}
+.ev-item.active{border-color:var(--yellow);background:var(--yellow-bg);}
+.ev-item-date{font-size:10px;color:var(--muted);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:6px;}
+.ev-item-name{font-family:'Bebas Neue',sans-serif;font-size:17px;letter-spacing:1.5px;margin-bottom:4px;}
+.ev-item-meta{font-size:11px;color:var(--muted);}
+.ev-item-tags{display:flex;gap:4px;margin-top:6px;flex-wrap:wrap;}
+.badge{font-size:10px;padding:2px 7px;border-radius:2px;letter-spacing:.8px;text-transform:uppercase;font-weight:600;}
+.badge-venue{background:var(--green-bg);color:var(--green);}
+.badge-weather{background:var(--blue-bg);color:var(--blue);}
+.ev-empty{text-align:center;padding:48px 20px;color:var(--muted);font-size:13px;}
+.ev-empty-icon{font-size:36px;margin-bottom:12px;}
 
-  .tools-grid{
-    display:grid;
-    grid-template-columns:repeat(auto-fit,minmax(300px,1fr));
-    gap:20px;
-  }
+/* DETAIL */
+.ev-detail{flex:1;overflow-y:auto;padding:32px 40px;}
+.ev-detail-empty{display:flex;flex-direction:column;align-items:center;justify-content:center;flex:1;color:var(--muted);gap:12px;min-height:300px;}
+.ev-detail-empty .icon{font-size:48px;opacity:.3;}
+.ev-hdr-row{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:28px;}
+.ev-hdr-left h1{font-family:'Bebas Neue',sans-serif;font-size:32px;letter-spacing:2px;margin-bottom:6px;}
+.ev-hdr-left .ev-date-display{font-size:13px;color:var(--muted);display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+.ev-actions{display:flex;gap:8px;}
+.btn-icon{width:36px;height:36px;border-radius:var(--radius);border:1px solid var(--border);background:transparent;color:var(--muted);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px;transition:all .2s;}
+.btn-icon:hover{border-color:var(--border2);color:var(--white);}
+.btn-icon.danger:hover{border-color:var(--red);color:var(--red);}
+.ev-section{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);margin-bottom:16px;overflow:hidden;}
+.ev-section-hdr{padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;}
+.ev-section-hdr .sec-icon{font-size:16px;}
+.ev-section-hdr h3{font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:1.5px;}
+.ev-section-hdr .sec-badge{margin-left:auto;}
+.ev-section-body{padding:18px;}
 
-  .tool-card{
-    background:#161616;
-    border:1px solid #222;
-    border-radius:4px;
-    padding:32px;
-    text-decoration:none;
-    color:inherit;
-    display:flex;
-    flex-direction:column;
-    gap:20px;
-    position:relative;
-    overflow:hidden;
-    transition:border-color .25s, transform .25s, box-shadow .25s;
-  }
-  .tool-card::before{
-    content:'';
-    position:absolute;
-    top:0;left:0;right:0;
-    height:3px;
-    background:var(--yellow);
-    transform:scaleX(0);
-    transform-origin:left;
-    transition:transform .3s ease;
-  }
-  .tool-card:hover{
-    border-color:#333;
-    transform:translateY(-4px);
-    box-shadow:0 20px 60px rgba(0,0,0,.5);
-  }
-  .tool-card:hover::before{
-    transform:scaleX(1);
-  }
+/* VENUE ALERT */
+.venue-alert{background:var(--green-bg);border:1px solid rgba(34,197,94,.2);border-radius:var(--radius);padding:14px 16px;display:flex;align-items:flex-start;gap:12px;}
+.venue-alert .alert-icon{font-size:20px;flex-shrink:0;margin-top:1px;}
+.venue-alert .alert-body{flex:1;}
+.venue-alert .alert-title{font-weight:600;font-size:13px;color:var(--green);margin-bottom:4px;}
+.venue-alert .alert-sub{font-size:12px;color:var(--muted);margin-bottom:10px;}
+.btn-guide{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;background:var(--green);color:#000;border-radius:var(--radius);font-size:12px;font-weight:700;text-decoration:none;transition:opacity .2s;}
+.btn-guide:hover{opacity:.85;}
 
-  .tool-icon{
-    width:48px;height:48px;
-    background:#1e1e1e;
-    border:1px solid #2a2a2a;
-    border-radius:3px;
-    display:flex;align-items:center;justify-content:center;
-    font-size:22px;
-    transition:background .25s;
-  }
-  .tool-card:hover .tool-icon{
-    background:#252500;
-    border-color:var(--yellow-dim);
-  }
+/* WEATHER */
+.weather-loading{color:var(--muted);font-size:13px;display:flex;align-items:center;gap:8px;}
+.weather-box{display:grid;grid-template-columns:auto 1fr;gap:16px;align-items:center;}
+.w-icon{font-size:52px;line-height:1;}
+.w-temp{font-family:'Bebas Neue',sans-serif;font-size:42px;color:var(--yellow);letter-spacing:2px;line-height:1;}
+.w-desc{font-size:13px;color:var(--muted);text-transform:capitalize;margin-bottom:8px;}
+.w-grid{display:flex;gap:16px;flex-wrap:wrap;}
+.w-item{font-size:12px;color:var(--muted);display:flex;align-items:center;gap:5px;}
+.w-item strong{color:var(--white);}
+.weather-unavail{font-size:13px;color:var(--muted2);font-style:italic;}
+.embed-link{display:inline-flex;align-items:center;gap:8px;padding:10px 18px;background:var(--card2);border:1px solid var(--border2);border-radius:var(--radius);font-size:13px;font-weight:600;color:var(--yellow);text-decoration:none;transition:all .2s;}
+.embed-link:hover{background:var(--yellow-bg);border-color:var(--yellow);}
 
-  .tool-body{flex:1;}
-  .tool-num{
-    font-size:11px;
-    color:var(--muted);
-    letter-spacing:2px;
-    margin-bottom:10px;
-  }
-  .tool-title{
-    font-family:'Bebas Neue',sans-serif;
-    font-size:26px;
-    letter-spacing:2.5px;
-    color:var(--white);
-    margin-bottom:10px;
-    line-height:1.1;
-  }
-  .tool-desc{
-    font-size:13px;
-    color:#888;
-    line-height:1.65;
-    font-weight:300;
-  }
+/* FORM */
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;}
+.field-row.s3{grid-template-columns:1fr 1fr 1fr;}
+.field-row.s1{grid-template-columns:1fr;}
+.fgrp{display:flex;flex-direction:column;gap:5px;}
+.fgrp label{font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);font-weight:600;}
+.fgrp input,.fgrp select,.fgrp textarea{background:var(--card2);border:1px solid var(--border2);border-radius:var(--radius);padding:10px 12px;color:var(--white);font-family:'Outfit',sans-serif;font-size:13px;outline:none;transition:border-color .2s;}
+.fgrp input:focus,.fgrp select:focus,.fgrp textarea:focus{border-color:var(--yellow);}
+.fgrp input::placeholder,.fgrp textarea::placeholder{color:var(--muted2);}
+.fgrp textarea{resize:vertical;min-height:80px;}
+.fgrp select option{background:var(--card2);}
+.venue-search-wrap{position:relative;}
+.venue-suggestions{position:absolute;top:calc(100% + 4px);left:0;right:0;background:var(--card);border:1px solid var(--border2);border-radius:var(--radius);max-height:220px;overflow-y:auto;z-index:100;display:none;}
+.venue-suggestions.show{display:block;}
+.vs-item{padding:10px 14px;cursor:pointer;transition:background .15s;border-bottom:1px solid var(--border);}
+.vs-item:last-child{border-bottom:none;}
+.vs-item:hover{background:var(--card2);}
+.vs-item-name{font-size:13px;font-weight:500;}
+.vs-item-addr{font-size:11px;color:var(--muted);margin-top:2px;}
+.vs-item-cat{display:inline-block;font-size:10px;padding:1px 6px;border-radius:2px;margin-top:4px;background:var(--green-bg);color:var(--green);font-weight:600;}
 
-  .tool-tags{
-    display:flex;
-    flex-wrap:wrap;
-    gap:6px;
-  }
-  .tag{
-    font-size:10px;
-    letter-spacing:1.5px;
-    text-transform:uppercase;
-    color:#555;
-    background:#1e1e1e;
-    border:1px solid #2a2a2a;
-    padding:3px 10px;
-    border-radius:2px;
-  }
+/* MODAL */
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:500;display:none;align-items:center;justify-content:center;backdrop-filter:blur(4px);}
+.modal-bg.show{display:flex;}
+.modal{background:var(--surface);border:1px solid var(--border2);border-radius:8px;width:640px;max-width:95vw;max-height:90vh;overflow-y:auto;display:flex;flex-direction:column;}
+.modal-hdr{padding:22px 24px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
+.modal-hdr h2{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:2px;}
+.modal-close{background:transparent;border:none;color:var(--muted);font-size:22px;cursor:pointer;line-height:1;transition:color .2s;}
+.modal-close:hover{color:var(--white);}
+.modal-body{padding:24px;flex:1;}
+.modal-footer{padding:16px 24px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:10px;flex-shrink:0;}
+.btn-cancel{padding:10px 18px;border:1px solid var(--border2);background:transparent;color:var(--muted);border-radius:var(--radius);font-family:'Outfit',sans-serif;font-size:13px;cursor:pointer;transition:all .2s;}
+.btn-cancel:hover{color:var(--white);}
+.btn-save{padding:10px 22px;background:var(--yellow);color:var(--black);border:none;border-radius:var(--radius);font-family:'Outfit',sans-serif;font-size:13px;font-weight:700;cursor:pointer;transition:opacity .2s;}
+.btn-save:hover{opacity:.88;}
 
-  .tool-cta{
-    display:flex;
-    align-items:center;
-    gap:8px;
-    font-size:12px;
-    font-weight:600;
-    letter-spacing:2px;
-    text-transform:uppercase;
-    color:var(--yellow);
-    opacity:0;
-    transform:translateX(-6px);
-    transition:opacity .25s, transform .25s;
-  }
-  .tool-card:hover .tool-cta{
-    opacity:1;
-    transform:translateX(0);
-  }
-  .tool-cta svg{transition:transform .2s;}
-  .tool-card:hover .tool-cta svg{transform:translateX(4px);}
+/* TOAST */
+.toast{position:fixed;bottom:28px;right:28px;background:var(--card);border:1px solid var(--border2);border-radius:var(--radius);padding:12px 20px;font-size:13px;color:var(--white);z-index:999;opacity:0;transform:translateY(10px);transition:all .3s;pointer-events:none;}
+.toast.show{opacity:1;transform:translateY(0);}
+.toast.success{border-color:var(--green);color:var(--green);}
+.toast.error{border-color:var(--red);color:var(--red);}
 
-  /* ─── FOOTER ─── */
-  footer{
-    border-top:1px solid #1a1a1a;
-    padding:20px 48px;
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    flex-wrap:wrap;
-    gap:12px;
-  }
-  footer p{font-size:11px;color:#444;letter-spacing:1px;}
-  .footer-logo{
-    font-family:'Bebas Neue',sans-serif;
-    font-size:22px;
-    color:#333;
-    letter-spacing:4px;
-  }
-  .footer-logo span{color:#444;}
+@keyframes spin{to{transform:rotate(360deg)}}
+.spin{display:inline-block;width:14px;height:14px;border:2px solid var(--border2);border-top-color:var(--yellow);border-radius:50%;animation:spin .7s linear infinite;}
 
-  /* ─── ANIMATIONS ─── */
-  @keyframes fadeUp{
-    from{opacity:0;transform:translateY(20px);}
-    to{opacity:1;transform:translateY(0);}
-  }
-  .hero{animation:fadeUp .6s ease both;}
-  .section-label{animation:fadeUp .6s .1s ease both;}
-  .tool-card:nth-child(1){animation:fadeUp .6s .15s ease both;}
-  .tool-card:nth-child(2){animation:fadeUp .6s .25s ease both;}
-  .tool-card:nth-child(3){animation:fadeUp .6s .35s ease both;}
+footer{border-top:1px solid var(--border);padding:16px 40px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
+footer p{font-size:11px;color:var(--muted2);letter-spacing:1px;}
+.footer-logo{font-family:'Bebas Neue',sans-serif;font-size:20px;color:#333;letter-spacing:4px;}
 
-  @media(max-width:640px){
-    header{padding:20px 24px 18px;}
-    .logo{font-size:52px;}
-    .hero{padding:40px 24px 32px;}
-    .tools-section{padding:0 24px 60px;}
-    footer{padding:16px 24px;}
-  }
+@media(max-width:900px){
+  .tools-grid{grid-template-columns:1fr;}
+  .events-layout{grid-template-columns:1fr;grid-template-rows:auto 1fr;}
+  .events-sidebar{max-height:260px;}
+}
+@media(max-width:640px){
+  .hdr{padding:0 16px;}
+  .home-hero,.tools-grid{padding-left:16px;padding-right:16px;}
+  .ev-detail{padding:20px 16px;}
+}
+
+/* ── LAB EVENT TAB ── */
+.le-layout{display:grid;grid-template-columns:340px 1fr;flex:1;min-height:0;overflow:hidden;}
+.le-sidebar{background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden;}
+.le-sidebar-hdr{padding:16px;border-bottom:1px solid var(--border);flex-shrink:0;}
+.le-sidebar-hdr h2{font-family:'Bebas Neue',sans-serif;font-size:19px;letter-spacing:2px;margin-bottom:12px;}
+.le-token-row{display:flex;gap:8px;margin-bottom:10px;}
+.le-token-input{flex:1;background:var(--card2);border:1px solid var(--border2);border-radius:var(--radius);padding:8px 10px;color:var(--white);font-family:'Outfit',sans-serif;font-size:12px;outline:none;transition:border-color .2s;}
+.le-token-input:focus{border-color:var(--yellow);}
+.le-token-input::placeholder{color:var(--muted2);}
+.btn-connect{padding:8px 14px;background:var(--yellow);color:var(--black);border:none;border-radius:var(--radius);font-family:'Outfit',sans-serif;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap;transition:opacity .2s;}
+.btn-connect:hover{opacity:.85;}
+.btn-connect:disabled{opacity:.4;cursor:not-allowed;}
+.le-filters{display:flex;gap:6px;flex-wrap:wrap;}
+.le-filter-input{flex:1;min-width:120px;background:var(--card2);border:1px solid var(--border2);border-radius:var(--radius);padding:6px 10px;color:var(--white);font-family:'Outfit',sans-serif;font-size:12px;outline:none;}
+.le-filter-input:focus{border-color:var(--yellow);}
+.le-list{flex:1;overflow-y:auto;padding:10px;}
+.le-item{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:12px 14px;margin-bottom:7px;cursor:pointer;transition:all .2s;}
+.le-item:hover{border-color:var(--border2);}
+.le-item.active{border-color:var(--yellow);background:var(--yellow-bg);}
+.le-item-date{font-size:10px;color:var(--muted);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:5px;}
+.le-item-name{font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:1.5px;margin-bottom:3px;line-height:1.2;}
+.le-item-meta{font-size:11px;color:var(--muted);}
+.le-item-tags{display:flex;gap:4px;margin-top:5px;flex-wrap:wrap;}
+.badge-crm{background:rgba(139,92,246,.12);color:#a78bfa;}
+.le-detail{flex:1;overflow-y:auto;padding:28px 36px;}
+.le-detail-empty{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:300px;color:var(--muted);gap:12px;text-align:center;}
+.le-detail-empty .icon{font-size:48px;opacity:.25;}
+.planning-table{width:100%;border-collapse:collapse;font-size:13px;}
+.planning-table th{text-align:left;padding:8px 12px;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);border-bottom:1px solid var(--border2);font-weight:600;}
+.planning-table td{padding:10px 12px;border-bottom:1px solid var(--border);color:var(--muted);vertical-align:top;}
+.planning-table td:first-child{color:var(--white);font-weight:500;}
+.planning-table tr:last-child td{border-bottom:none;}
+.time-chip{display:inline-block;background:var(--yellow);color:var(--black);font-weight:700;font-size:11px;padding:2px 8px;border-radius:3px;font-family:'Bebas Neue',sans-serif;letter-spacing:1px;}
+.time-chip.derived{background:var(--card2);color:var(--muted);border:1px solid var(--border2);}
+.conn-status{display:inline-flex;align-items:center;gap:6px;font-size:11px;color:var(--muted);margin-bottom:8px;}
+.conn-dot{width:7px;height:7px;border-radius:50%;background:var(--muted2);}
+.conn-dot.ok{background:var(--green);}
+.conn-dot.err{background:var(--red);}
+.le-import-btn{width:100%;padding:9px;background:transparent;border:1px dashed var(--border2);border-radius:var(--radius);color:var(--muted);font-family:'Outfit',sans-serif;font-size:12px;cursor:pointer;transition:all .2s;margin-top:8px;}
+.le-import-btn:hover{border-color:var(--yellow);color:var(--yellow);}
+.prod-row{display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid var(--border);}
+.prod-row:last-child{border-bottom:none;}
+.prod-name{flex:1;font-size:13px;}
+.prod-time{font-size:12px;color:var(--muted);}
+.venue-ref-chip{display:inline-flex;align-items:center;gap:4px;background:var(--green-bg);color:var(--green);font-size:10px;padding:2px 8px;border-radius:2px;font-weight:600;text-decoration:none;}
+.venue-ref-chip:hover{opacity:.85;}
 </style>
 </head>
 <body>
 
-<header>
+<header class="hdr">
   <div class="logo">2I<span>SD</span></div>
-  <div class="header-info">
-    <h1>Outils Opérationnels</h1>
-    <p>Plateforme interne — Accès aux configurateurs</p>
-  </div>
+  <div class="hdr-sep"></div>
+  <div class="hdr-title">Plateforme Opérationnelle</div>
+  <nav class="hdr-nav">
+    <button class="nav-btn active" onclick="showTab('home',this)">🏠 Accueil</button>
+    <button class="nav-btn" onclick="showTab('events',this)">📅 Événements</button>
+    <button class="nav-btn" onclick="showTab('labevent',this)">🔌 Lab Event</button>
+  </nav>
 </header>
 
-<section class="hero">
-  <p class="hero-label">Bienvenue</p>
-  <h2>Vos 3 outils<br>en un seul endroit</h2>
-  <p>Accédez rapidement à l'ensemble des configurateurs et calculateurs opérationnels 2ISD. Sélectionnez l'outil correspondant à votre besoin.</p>
-</section>
-
-<section class="tools-section">
-  <p class="section-label">Outils disponibles</p>
+<!-- TAB ACCUEIL -->
+<div class="tab active" id="tab-home">
+  <div class="home-hero">
+    <p class="hero-label">2ISD — Outils internes</p>
+    <h1 class="hero-title">Plateforme<br>opérationnelle</h1>
+    <p class="hero-sub">Configurateurs, planificateur de trajets, carte des guides réceptifs et gestion d'événements.</p>
+  </div>
   <div class="tools-grid">
-
-    <!-- Outil 1 -->
     <a class="tool-card" href="calculateur_trajets_v13.html">
       <div class="tool-icon">🗺️</div>
-      <div class="tool-body">
-        <p class="tool-num">OUTIL 01</p>
-        <h3 class="tool-title">Planificateur de Prestation</h3>
-        <p class="tool-desc">Calcul des trajets, distances et coûts de déplacement pour l'organisation de vos prestations terrain.</p>
-      </div>
-      <div class="tool-tags">
-        <span class="tag">Trajets</span>
-        <span class="tag">Cartographie</span>
-        <span class="tag">Calcul</span>
-      </div>
-      <div class="tool-cta">
-        Accéder
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-      </div>
+      <div><p class="tool-num">OUTIL 01</p><h3 class="tool-title">Planificateur de Prestation</h3></div>
+      <p class="tool-desc">Calcul des trajets, distances et coûts de déplacement pour vos prestations terrain.</p>
+      <div class="tool-tags"><span class="tag">Trajets</span><span class="tag">Carte</span><span class="tag">Calcul</span></div>
+      <div class="tool-arrow">ACCÉDER →</div>
     </a>
-
-    <!-- Outil 2 -->
     <a class="tool-card" href="guides-receptifs_référencés_v3.html">
       <div class="tool-icon">🧭</div>
-      <div class="tool-body">
-        <p class="tool-num">OUTIL 02</p>
-        <h3 class="tool-title">Guides Réceptifs</h3>
-        <p class="tool-desc">Carte interactive des guides réceptifs référencés. Visualisation et filtrage géographique de votre réseau.</p>
-      </div>
-      <div class="tool-tags">
-        <span class="tag">Guides</span>
-        <span class="tag">Carte</span>
-        <span class="tag">Réseau</span>
-      </div>
-      <div class="tool-cta">
-        Accéder
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-      </div>
+      <div><p class="tool-num">OUTIL 02</p><h3 class="tool-title">Guides Réceptifs</h3></div>
+      <p class="tool-desc">Carte interactive des guides réceptifs référencés. Visualisation et filtrage géographique.</p>
+      <div class="tool-tags"><span class="tag">Guides</span><span class="tag">Carte</span><span class="tag">Réseau</span></div>
+      <div class="tool-arrow">ACCÉDER →</div>
     </a>
-
-    <!-- Outil 3 -->
     <a class="tool-card" href="préconisation_activité_v15.html">
       <div class="tool-icon">⚙️</div>
-      <div class="tool-body">
-        <p class="tool-num">OUTIL 03</p>
-        <h3 class="tool-title">Configurateur d'Activités</h3>
-        <p class="tool-desc">Préconisation et configuration des activités selon les critères du groupe. Génération de programmes personnalisés.</p>
-      </div>
-      <div class="tool-tags">
-        <span class="tag">Activités</span>
-        <span class="tag">Configuration</span>
-        <span class="tag">Programme</span>
-      </div>
-      <div class="tool-cta">
-        Accéder
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-      </div>
+      <div><p class="tool-num">OUTIL 03</p><h3 class="tool-title">Configurateur d'Activités</h3></div>
+      <p class="tool-desc">Préconisation et configuration des activités selon les critères du groupe.</p>
+      <div class="tool-tags"><span class="tag">Activités</span><span class="tag">Config</span><span class="tag">Programme</span></div>
+      <div class="tool-arrow">ACCÉDER →</div>
     </a>
-
   </div>
-</section>
+</div>
+
+<!-- TAB EVENEMENTS -->
+<div class="tab" id="tab-events">
+  <div class="events-layout">
+    <aside class="events-sidebar">
+      <div class="ev-sidebar-hdr">
+        <h2>📅 Mes Événements</h2>
+        <button class="btn-new" onclick="openModal()">+ Créer un événement</button>
+      </div>
+      <div class="ev-list" id="evList">
+        <div class="ev-empty"><div class="ev-empty-icon">🗂️</div><p>Aucun événement.<br>Créez votre premier projet.</p></div>
+      </div>
+    </aside>
+    <main class="ev-detail" id="evDetail">
+      <div class="ev-detail-empty">
+        <div class="icon">📋</div>
+        <p>Sélectionnez ou créez un événement pour voir ses détails.</p>
+      </div>
+    </main>
+  </div>
+</div>
+
+<!-- TAB LAB EVENT -->
+<div class="tab" id="tab-labevent">
+  <div class="le-layout">
+    <!-- Sidebar -->
+    <aside class="le-sidebar">
+      <div class="le-sidebar-hdr">
+        <h2>🔌 Lab Event CRM</h2>
+        <div class="conn-status" id="leConnStatus"><span class="conn-dot" id="leConnDot"></span><span id="leConnLabel">Non connecté</span></div>
+        <div class="le-token-row">
+          <input class="le-token-input" type="password" id="leToken" placeholder="Coller votre token API…">
+          <button class="btn-connect" id="leConnBtn" onclick="leConnect()">Connecter</button>
+        </div>
+        <div class="le-filters" id="leFilters" style="display:none">
+          <input class="le-filter-input" type="date" id="leStart" title="Date de début">
+          <input class="le-filter-input" type="date" id="leEnd" title="Date de fin">
+          <button class="btn-connect" style="background:var(--card2);color:var(--muted);border:1px solid var(--border2);" onclick="leLoad()">🔄</button>
+        </div>
+        <button class="le-import-btn" id="leImportBtn" style="display:none" onclick="leImportAll()">⬇️ Importer tout dans Événements</button>
+      </div>
+      <div class="le-list" id="leList">
+        <div class="ev-empty"><div class="ev-empty-icon">🔌</div><p>Connectez-vous avec votre token API Lab Event pour charger vos événements.</p></div>
+      </div>
+    </aside>
+    <!-- Detail -->
+    <main class="le-detail" id="leDetail">
+      <div class="le-detail-empty">
+        <div class="icon">📋</div>
+        <p>Sélectionnez un événement Lab Event<br>pour voir la fiche et le planning généré.</p>
+      </div>
+    </main>
+  </div>
+</div>
+
+<!-- MODAL -->
+<div class="modal-bg" id="modalBg">
+  <div class="modal">
+    <div class="modal-hdr">
+      <h2 id="modalTitle">Nouvel Événement</h2>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="field-row">
+        <div class="fgrp">
+          <label>Nom du projet *</label>
+          <input type="text" id="fNom" placeholder="Ex : Séminaire Renault 2025">
+        </div>
+        <div class="fgrp">
+          <label>Date *</label>
+          <input type="date" id="fDate">
+        </div>
+      </div>
+      <div class="field-row s3">
+        <div class="fgrp">
+          <label>Heure</label>
+          <input type="time" id="fHeure" value="09:00">
+        </div>
+        <div class="fgrp">
+          <label>Participants</label>
+          <input type="number" id="fPax" placeholder="Ex : 40" min="1">
+        </div>
+        <div class="fgrp">
+          <label>Client / Entreprise</label>
+          <input type="text" id="fClient" placeholder="Ex : Renault SA">
+        </div>
+      </div>
+      <div class="field-row s1">
+        <div class="fgrp">
+          <label>Lieu / Adresse *</label>
+          <div class="venue-search-wrap">
+            <input type="text" id="fLieu" placeholder="Tapez un nom de lieu ou une adresse…" autocomplete="off" oninput="onVenueSearch(this.value)">
+            <div class="venue-suggestions" id="venueSugg"></div>
+          </div>
+        </div>
+      </div>
+      <div id="venueAlert" style="display:none;margin-bottom:12px;">
+        <div class="venue-alert">
+          <div class="alert-icon">✅</div>
+          <div class="alert-body">
+            <div class="alert-title">Lieu référencé 2ISD</div>
+            <div class="alert-sub" id="venueAlertSub">Ce lieu fait partie de votre réseau de guides réceptifs.</div>
+            <a href="guides-receptifs_référencés_v3.html" target="_blank" class="btn-guide" id="venueAlertBtn">🧭 Voir le guide réceptif ↗</a>
+          </div>
+        </div>
+      </div>
+      <div class="field-row">
+        <div class="fgrp">
+          <label>Adresse de départ (trajet)</label>
+          <input type="text" id="fDepart" placeholder="Ex : 12 Rue de la Paix, Paris">
+        </div>
+        <div class="fgrp">
+          <label>Type d'événement</label>
+          <select id="fType">
+            <option value="">— Sélectionner —</option>
+            <option>Séminaire</option>
+            <option>Team Building</option>
+            <option>Incentive</option>
+            <option>Conférence</option>
+            <option>Repas d'affaires</option>
+            <option>Autre</option>
+          </select>
+        </div>
+      </div>
+      <div class="field-row s1">
+        <div class="fgrp">
+          <label>Notes</label>
+          <textarea id="fNotes" placeholder="Informations complémentaires…"></textarea>
+        </div>
+      </div>
+      <input type="hidden" id="fVenueRef">
+      <input type="hidden" id="fVenueUrl">
+      <input type="hidden" id="fLat">
+      <input type="hidden" id="fLng">
+      <input type="hidden" id="fEditId">
+    </div>
+    <div class="modal-footer">
+      <button class="btn-cancel" onclick="closeModal()">Annuler</button>
+      <button class="btn-save" onclick="saveEvent()">💾 Enregistrer</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
 
 <footer>
   <p>© 2025 2ISD — Usage interne uniquement</p>
-  <div class="footer-logo">2I<span>SD</span></div>
+  <div class="footer-logo">2I<span style="color:#444">SD</span></div>
 </footer>
 
+<script>
+// ── VENUES DATA ──
+const VENUES=[
+  {name:"Comet Étoile",cat:"comet",address:"20 Rue de l'Amiral Hamelin, 75116 Paris",url:"https://urlr.me/Jk5peF",lat:48.8657,lng:2.2880},
+  {name:"Comet Cœur Défense",cat:"comet",address:"110 Esplanade du Général de Gaulle, 92400 Courbevoie",url:"https://urlr.me/nUKMTp",lat:48.8928,lng:2.2389},
+  {name:"Comet Arboretum",cat:"comet",address:"110 Allée de l'Arboretum, 92000 Nanterre",url:"https://urlr.me/fMvy9b",lat:48.8924,lng:2.2068},
+  {name:"Comet Bercy",cat:"comet",address:"28 Rue de Bercy, 75012 Paris",url:"https://urlr.me/vxZVAX",lat:48.8399,lng:2.3792},
+  {name:"Comet Place des Victoires",cat:"comet",address:"1 Place des Victoires, 75002 Paris",url:"https://urlr.me/nm53a6",lat:48.8636,lng:2.3452},
+  {name:"Comet Ternes",cat:"comet",address:"8 Rue Brey, 75017 Paris",url:"https://urlr.me/szSM5K",lat:48.8788,lng:2.2975},
+  {name:"Comet Bourse",cat:"comet",address:"12 Rue Vivienne, 75002 Paris",url:"https://urlr.me/THyWpJ",lat:48.8672,lng:2.3419},
+  {name:"Comet Levallois",cat:"comet",address:"26 Rue Anatole France, 92300 Levallois-Perret",url:"https://urlr.me/vebagJ",lat:48.8956,lng:2.2874},
+  {name:"Les Jardins de St Dominique",cat:"chateau",address:"12 Rue de la Comète, 75007 Paris",url:"https://urlr.me/j9GNCs",lat:48.8575,lng:2.3076},
+  {name:"Les Étangs de Saint-Aubin",cat:"chateau",address:"Domaine de Saint-Aubin, 27800 Brionne",url:"https://urlr.me/z8QKaA",lat:49.2215,lng:1.3520},
+  {name:"Le Ronqueux",cat:"chateau",address:"Le Ronqueux, 78440 Garancières",url:"https://urlr.me/NScxFE",lat:48.9620,lng:1.8450},
+  {name:"Les Berges de Seine",cat:"chateau",address:"Route de Montcourt, 77520 Donnemarie-Dontilly",url:"https://urlr.me/hVt3fp",lat:48.4550,lng:2.6810},
+  {name:"Campus Saint Just",cat:"chateau",address:"Château de Saint-Just, 60130 Saint-Just-en-Chaussée",url:"https://urlr.me/Ub3wqR",lat:49.1850,lng:2.5840},
+  {name:"Château de Guermantes",cat:"chateau",address:"Château de Guermantes, 77600 Guermantes",url:"https://urlr.me/GNrgmT",lat:48.8500,lng:2.7280},
+  {name:"Les Prés d'Écoublay",cat:"chateau",address:"Les Prés d'Écoublay, 77830 Échouboulains",url:"https://urlr.me/f9tGMY",lat:48.4720,lng:2.5630},
+  {name:"Stade Bollaert",cat:"stade",address:"Rue du Maréchal Foch, 62300 Lens",url:"https://urlr.me/Mx9d43",lat:50.4328,lng:2.8147},
+  {name:"Stade Pierre Mauroy",cat:"stade",address:"261 Boulevard de Tournai, 59650 Villeneuve-d'Ascq",url:"https://urlr.me/rc7Wn9",lat:50.6117,lng:3.1305},
+  {name:"Parc des Princes",cat:"stade",address:"24 Rue du Commandant Guilbaud, 75016 Paris",url:"https://urlr.me/uHSDbh",lat:48.8414,lng:2.2530},
+  {name:"Stade de France",cat:"stade",address:"Rue Francis de Pressensé, 93210 Saint-Denis",url:"https://urlr.me/3rPzmC",lat:48.9244,lng:2.3601},
+  {name:"L'Épopée",cat:"stade",address:"Rue de l'Épopée, 62100 Calais",url:"https://urlr.me/HXZuKQ",lat:50.9487,lng:1.8578},
+  {name:"Espace Saint-Antoine",cat:"paris",address:"4 Rue Antoine Vollon, 75012 Paris",url:"https://urlr.me/wshG4R",lat:48.8530,lng:2.3680},
+  {name:"Urban Station",cat:"paris",address:"9 Cité Paradis, 75010 Paris",url:"https://urlr.me/UR5TP2",lat:48.8728,lng:2.3490},
+  {name:"Hôtel des Arts et Métiers",cat:"paris",address:"9 bis Rue Borda, 75003 Paris",url:"https://urlr.me/VH7uBj",lat:48.8632,lng:2.3523},
+  {name:"Pavillon Royal",cat:"paris",address:"Route de la Grande Cascade, 75016 Paris",url:"https://urlr.me/J7GRmb",lat:48.8730,lng:2.2560},
+  {name:"Pavillon d'Armenonville",cat:"paris",address:"Allée d'Armenonville, 75016 Paris",url:"https://urlr.me/gjbHxS",lat:48.8795,lng:2.2446},
+  {name:"Espaces BSA",cat:"paris",address:"130 Rue de Belleville, 75020 Paris",url:"https://urlr.me/4GEfVD",lat:48.8630,lng:2.3975},
+  {name:"Hippodrome Paris Longchamp",cat:"paris",address:"2 Route des Tribunes, 75016 Paris",url:"https://urlr.me/NTE3ZP",lat:48.8587,lng:2.2380},
+  {name:"New Chalet du Lac",cat:"paris",address:"Route de Suresnes, 75016 Paris",url:"https://urlr.me/N2ypGB",lat:48.8560,lng:2.2460},
+  {name:"Espace City Zen",cat:"paris",address:"15 Quai de Grenelle, 75015 Paris",url:"https://urlr.me/9FwpyV",lat:48.8503,lng:2.3327},
+  {name:"Rosa Bonheur Est",cat:"paris",address:"Parc des Buttes-Chaumont, 75019 Paris",url:"https://urlr.me/sk5WDm",lat:48.8800,lng:2.3915},
+  {name:"Pavillon Chesnay du Roy",cat:"paris",address:"Bois de Boulogne, 75016 Paris",url:"https://urlr.me/eaRtvN",lat:48.8622,lng:2.2534},
+  {name:"Château de Longchamp",cat:"paris",address:"Bois de Boulogne, 75016 Paris",url:"https://urlr.me/JkrgNj",lat:48.8592,lng:2.2411},
+  {name:"Pavillon des Princes",cat:"paris",address:"24 Rue du Commandant Guilbaud, 75016 Paris",url:"https://urlr.me/7JKYh9",lat:48.8420,lng:2.2560},
+  {name:"Novotel Paris Vaugirard",cat:"paris",address:"257 Rue de Vaugirard, 75015 Paris",url:"https://urlr.me/emH8dY",lat:48.8377,lng:2.3042},
+  {name:"211 — Paris 75019",cat:"paris",address:"211 Avenue Jean Jaurès, 75019 Paris",url:"https://urlr.me/djKCQf",lat:48.8860,lng:2.3791},
+  {name:"Le Mazette",cat:"paris",address:"10 Rue Chaligny, 75012 Paris",url:"https://urlr.me/yXZPgG",lat:48.8431,lng:2.3865},
+  {name:"Bateaux à roue",cat:"paris",address:"Port de Bercy, 75012 Paris",url:"http://urlr.me/tBUrTa",lat:48.8497,lng:2.3710},
+  {name:"Nomade Lodge",cat:"idf",address:"La Brosse Montceaux, 77940 Seine-et-Marne",url:"https://urlr.me/At3rMB",lat:48.5240,lng:2.9120},
+  {name:"Manoir de Gressy",cat:"idf",address:"Le Manoir, 77410 Gressy",url:"https://urlr.me/zV8hNU",lat:48.9800,lng:2.6670},
+  {name:"Hôtel Radisson Blu Marne-la-Vallée",cat:"idf",address:"Allée des Deux Parcs, 77700 Chessy",url:"https://urlr.me/RsV7ZW",lat:48.8788,lng:2.7780},
+  {name:"Domaine de la Butte Ronde",cat:"idf",address:"Route de Grosrouvre, 78490 Sonchamp",url:"https://urlr.me/mBQdnA",lat:48.7060,lng:1.9440},
+  {name:"Ferme du Manet",cat:"idf",address:"Allée de la Ferme du Manet, 78180 Montigny-le-Bretonneux",url:"https://urlr.me/ajBWeQ",lat:48.8010,lng:2.0510},
+  {name:"Campus BNP Louveciennes",cat:"idf",address:"1 Bd des Bouvets, 78430 Louveciennes",url:"https://urlr.me/r6Fvbs",lat:48.8630,lng:2.1470},
+  {name:"Hôtel Le Barn",cat:"idf",address:"La Mare aux Canards, 78125 Saint-Symphorien-le-Château",url:"https://urlr.me/YVCybe",lat:48.6560,lng:1.9100},
+  {name:"FFF — Clairefontaine",cat:"idf",address:"Domaine de Montjoie, 78120 Clairefontaine-en-Yvelines",url:"https://urlr.me/zZCNAU",lat:48.6210,lng:1.9000},
+  {name:"Domaine de la Corniche",cat:"idf",address:"5 Rue de la Corniche, 78270 Rolleboise",url:"https://urlr.me/jg2Nk5",lat:48.9120,lng:1.5290},
+  {name:"Abbaye de Vaux de Cernay",cat:"idf",address:"Abbaye de Vaux de Cernay, 78720 Cernay-la-Ville",url:"https://urlr.me/eGNqgj",lat:48.6530,lng:1.9720},
+  {name:"Domaine de Frémigny",cat:"idf",address:"Domaine de Frémigny, 91150 Morigny-Champigny",url:"https://urlr.me/5ywTRt",lat:48.3680,lng:2.4860},
+  {name:"Les Gatines",cat:"idf",address:"Domaine des Gatines, 91280 Saint-Pierre-du-Perray",url:"https://urlr.me/n6RUMY",lat:48.4840,lng:2.1210},
+  {name:"Plaine de Saint-Cloud",cat:"idf",address:"Parc de Saint-Cloud, 92210 Saint-Cloud",url:"https://urlr.me/rcxKbE",lat:48.8420,lng:2.2120},
+  {name:"Hôtel Melia Paris la Défense",cat:"idf",address:"85 Avenue de la République, 92800 Puteaux",url:"https://urlr.me/pQTyS4",lat:48.9020,lng:2.2930},
+  {name:"Pullman Paris La Défense",cat:"idf",address:"11 Avenue de l'Arche, 92400 Courbevoie",url:"https://urlr.me/pkuVTD",lat:48.8970,lng:2.2420},
+  {name:"Métafore — Vincennes",cat:"idf",address:"30 Rue de Fontenay, 94300 Vincennes",url:"https://urlr.me/AdYKXN",lat:48.8480,lng:2.4385},
+  {name:"Domaine des Forges",cat:"normandie",address:"Route des Forges, 76890 Bosc-Guérard-Saint-Adrien",url:"https://urlr.me/M9kdt2",lat:49.5960,lng:1.3320},
+  {name:"Château de Belbeuf",cat:"normandie",address:"Le Château, 76240 Belbeuf",url:"https://urlr.me/g3jGpR",lat:49.3650,lng:1.1580},
+  {name:"Hôtel Bourgtheroulde",cat:"normandie",address:"15 Place de la Pucelle, 76000 Rouen",url:"https://urlr.me/RbEVUg",lat:49.4431,lng:1.0993},
+  {name:"Carré des Docks — Le Havre",cat:"normandie",address:"Quai Roger Meunier, 76600 Le Havre",url:"https://urlr.me/juxrTV",lat:49.4936,lng:0.1080},
+  {name:"Hôtel Barrière Le Royal",cat:"normandie",address:"Boulevard Cornuché, 14800 Deauville",url:"https://urlr.me/cVdxUu",lat:49.3620,lng:0.0710},
+  {name:"Hôtel Barrière Le Normandy",cat:"normandie",address:"38 Rue Jean Mermoz, 14800 Deauville",url:"https://urlr.me/NrjHps",lat:49.3610,lng:0.0720},
+  {name:"Castel Maintenon",cat:"normandie",address:"Château de Maintenon, 28130 Maintenon",url:"https://urlr.me/gxWFZj",lat:48.5860,lng:1.5770},
+  {name:"Abbaye de la Ramée",cat:"belgique",address:"Rue de la Ramée, 1370 Jauchelette, Belgique",url:"https://urlr.me/sjPm2X",lat:50.6410,lng:4.7230},
+];
+const CAT_LABELS={comet:"☄️ Comet Meetings",chateau:"🏰 Château'Form",stade:"🏟️ Stades",paris:"Paris",idf:"Île-de-France",normandie:"Normandie",belgique:"🇧🇪 Belgique"};
+
+// ── STORAGE ──
+const KEY='2isd_events_v1';
+function loadEvents(){try{return JSON.parse(localStorage.getItem(KEY))||[];}catch(e){return[];}}
+function saveEvents(evs){localStorage.setItem(KEY,JSON.stringify(evs));}
+let events=loadEvents();
+let activeId=null;
+
+// ── TABS ──
+function showTab(id,btn){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('tab-'+id).classList.add('active');
+  if(btn)btn.classList.add('active');
+}
+
+// ── MODAL ──
+function openModal(id=null){
+  const ev=id?events.find(e=>e.id===id):null;
+  document.getElementById('modalTitle').textContent=ev?'Modifier l\'événement':'Nouvel Événement';
+  document.getElementById('fEditId').value=ev?ev.id:'';
+  document.getElementById('fNom').value=ev?ev.nom:'';
+  document.getElementById('fDate').value=ev?ev.date:new Date().toISOString().slice(0,10);
+  document.getElementById('fHeure').value=ev?ev.heure:'09:00';
+  document.getElementById('fPax').value=ev?ev.pax:'';
+  document.getElementById('fClient').value=ev?ev.client:'';
+  document.getElementById('fLieu').value=ev?ev.lieu:'';
+  document.getElementById('fDepart').value=ev?ev.depart:'';
+  document.getElementById('fType').value=ev?ev.type:'';
+  document.getElementById('fNotes').value=ev?ev.notes:'';
+  document.getElementById('fVenueRef').value=ev?ev.venueRef:'';
+  document.getElementById('fVenueUrl').value=ev?ev.venueUrl:'';
+  document.getElementById('fLat').value=ev?ev.lat:'';
+  document.getElementById('fLng').value=ev?ev.lng:'';
+  if(ev&&ev.venueRef){showVenueAlert(ev.venueRef,ev.venueUrl);}
+  else{document.getElementById('venueAlert').style.display='none';}
+  document.getElementById('modalBg').classList.add('show');
+}
+function closeModal(){
+  document.getElementById('modalBg').classList.remove('show');
+  document.getElementById('venueSugg').classList.remove('show');
+}
+document.getElementById('modalBg').addEventListener('click',e=>{if(e.target.id==='modalBg')closeModal();});
+
+// ── VENUE SEARCH ──
+let vsTimer=null;
+function onVenueSearch(q){
+  clearTimeout(vsTimer);
+  document.getElementById('fVenueRef').value='';
+  document.getElementById('fVenueUrl').value='';
+  document.getElementById('fLat').value='';
+  document.getElementById('fLng').value='';
+  document.getElementById('venueAlert').style.display='none';
+  const sugg=document.getElementById('venueSugg');
+  if(!q||q.length<2){sugg.classList.remove('show');return;}
+  vsTimer=setTimeout(()=>{
+    const lq=q.toLowerCase();
+    const matches=VENUES.filter(v=>v.name.toLowerCase().includes(lq)||v.address.toLowerCase().includes(lq)).slice(0,8);
+    if(!matches.length){sugg.classList.remove('show');return;}
+    sugg.innerHTML=matches.map(v=>`
+      <div class="vs-item" data-idx="${VENUES.indexOf(v)}">
+        <div class="vs-item-name">${v.name}</div>
+        <div class="vs-item-addr">${v.address}</div>
+        <span class="vs-item-cat">✅ Lieu référencé — ${CAT_LABELS[v.cat]||v.cat}</span>
+      </div>`).join('');
+    sugg.classList.add('show');
+    sugg.querySelectorAll('.vs-item').forEach(el=>{
+      el.addEventListener('click',()=>{
+        const v=VENUES[+el.dataset.idx];
+        document.getElementById('fLieu').value=v.name+' — '+v.address;
+        document.getElementById('fVenueRef').value=v.name;
+        document.getElementById('fVenueUrl').value=v.url;
+        document.getElementById('fLat').value=v.lat;
+        document.getElementById('fLng').value=v.lng;
+        sugg.classList.remove('show');
+        showVenueAlert(v.name,v.url);
+      });
+    });
+  },200);
+}
+function showVenueAlert(name,url){
+  document.getElementById('venueAlertSub').textContent='"'+name+'" fait partie de votre réseau de guides réceptifs.';
+  document.getElementById('venueAlertBtn').href=url||'guides-receptifs_référencés_v3.html';
+  document.getElementById('venueAlert').style.display='';
+}
+document.addEventListener('click',e=>{
+  const sugg=document.getElementById('venueSugg');
+  const inp=document.getElementById('fLieu');
+  if(!inp.contains(e.target)&&!sugg.contains(e.target))sugg.classList.remove('show');
+});
+
+// ── SAVE ──
+function saveEvent(){
+  const nom=document.getElementById('fNom').value.trim();
+  const date=document.getElementById('fDate').value;
+  if(!nom){showToast('Le nom du projet est requis','error');return;}
+  if(!date){showToast('La date est requise','error');return;}
+  const editId=document.getElementById('fEditId').value;
+  const ev={
+    id:editId||'ev_'+Date.now(),
+    nom,date,
+    heure:document.getElementById('fHeure').value,
+    pax:document.getElementById('fPax').value,
+    client:document.getElementById('fClient').value.trim(),
+    lieu:document.getElementById('fLieu').value.trim(),
+    depart:document.getElementById('fDepart').value.trim(),
+    type:document.getElementById('fType').value,
+    notes:document.getElementById('fNotes').value.trim(),
+    venueRef:document.getElementById('fVenueRef').value,
+    venueUrl:document.getElementById('fVenueUrl').value,
+    lat:document.getElementById('fLat').value,
+    lng:document.getElementById('fLng').value,
+    createdAt:editId?(events.find(e=>e.id===editId)||{}).createdAt||Date.now():Date.now(),
+  };
+  if(editId){const i=events.findIndex(e=>e.id===editId);if(i>-1)events[i]=ev;}
+  else{events.unshift(ev);}
+  saveEvents(events);
+  closeModal();
+  renderList();
+  showDetail(ev.id);
+  showToast(editId?'Événement mis à jour ✓':'Événement créé ✓','success');
+}
+
+// ── DELETE ──
+function deleteEvent(id){
+  if(!confirm('Supprimer cet événement ?'))return;
+  events=events.filter(e=>e.id!==id);
+  saveEvents(events);
+  activeId=null;
+  renderList();
+  document.getElementById('evDetail').innerHTML='<div class="ev-detail-empty"><div class="icon">📋</div><p>Sélectionnez ou créez un événement.</p></div>';
+  showToast('Événement supprimé');
+}
+
+// ── LIST ──
+function renderList(){
+  const list=document.getElementById('evList');
+  if(!events.length){
+    list.innerHTML='<div class="ev-empty"><div class="ev-empty-icon">🗂️</div><p>Aucun événement.<br>Créez votre premier projet.</p></div>';
+    return;
+  }
+  const sorted=[...events].sort((a,b)=>new Date(a.date)-new Date(b.date));
+  list.innerHTML=sorted.map(ev=>{
+    const d=ev.date?new Date(ev.date+'T12:00').toLocaleDateString('fr-FR',{day:'2-digit',month:'short',year:'numeric'}):'—';
+    const badges=[
+      ev.venueRef?'<span class="badge badge-venue">✅ Réceptif</span>':'',
+      (ev.lat||ev.lng)?'<span class="badge badge-weather">🌤 Météo</span>':'',
+    ].filter(Boolean).join('');
+    return`<div class="ev-item${ev.id===activeId?' active':''}" onclick="showDetail('${ev.id}')">
+      <div class="ev-item-date">${d}${ev.heure?' · '+ev.heure:''}</div>
+      <div class="ev-item-name">${ev.nom}</div>
+      <div class="ev-item-meta">${[ev.type,ev.pax?ev.pax+' pers.':'',ev.client].filter(Boolean).join(' · ')}</div>
+      ${badges?'<div class="ev-item-tags">'+badges+'</div>':''}
+    </div>`;
+  }).join('');
+}
+
+// ── DETAIL ──
+async function showDetail(id){
+  activeId=id;
+  renderList();
+  const ev=events.find(e=>e.id===id);
+  if(!ev)return;
+  const d=ev.date?new Date(ev.date+'T12:00').toLocaleDateString('fr-FR',{weekday:'long',day:'2-digit',month:'long',year:'numeric'}):'—';
+
+  const venueHtml=ev.venueRef?`
+    <div class="ev-section">
+      <div class="ev-section-hdr"><span class="sec-icon">✅</span><h3>Lieu Référencé 2ISD</h3><span class="sec-badge badge badge-venue">Guide disponible</span></div>
+      <div class="ev-section-body">
+        <div class="venue-alert">
+          <div class="alert-icon">🧭</div>
+          <div class="alert-body">
+            <div class="alert-title">${ev.venueRef}</div>
+            <div class="alert-sub">${ev.lieu}</div>
+            <a href="${ev.venueUrl||'guides-receptifs_référencés_v3.html'}" target="_blank" class="btn-guide">Voir le guide réceptif ↗</a>
+          </div>
+        </div>
+      </div>
+    </div>`
+  :ev.lieu?`<div class="ev-section"><div class="ev-section-hdr"><span class="sec-icon">📍</span><h3>Lieu</h3></div><div class="ev-section-body" style="font-size:14px;color:var(--muted)">${ev.lieu}</div></div>`:'';
+
+  const wid='w_'+id;
+  const trajetHtml=`
+    <div class="ev-section">
+      <div class="ev-section-hdr"><span class="sec-icon">🗺️</span><h3>Configurateurs</h3></div>
+      <div class="ev-section-body" style="display:flex;flex-wrap:wrap;gap:10px;">
+        <a class="embed-link" href="calculateur_trajets_v13.html" target="_blank">🗺️ Planificateur de trajet ↗</a>
+        <a class="embed-link" href="préconisation_activité_v15.html" target="_blank">⚙️ Configurateur d'activités ↗</a>
+      </div>
+      ${ev.depart&&ev.lieu?`<div style="padding:0 18px 14px;font-size:12px;color:var(--muted2)">Départ : <strong style="color:var(--muted)">${ev.depart}</strong> → <strong style="color:var(--muted)">${ev.lieu}</strong></div>`:''}
+    </div>`;
+
+  const notesHtml=ev.notes?`
+    <div class="ev-section">
+      <div class="ev-section-hdr"><span class="sec-icon">📝</span><h3>Notes</h3></div>
+      <div class="ev-section-body" style="font-size:14px;color:var(--muted);white-space:pre-wrap;line-height:1.65">${ev.notes}</div>
+    </div>`:'';
+
+  document.getElementById('evDetail').innerHTML=`
+    <div class="ev-hdr-row">
+      <div class="ev-hdr-left">
+        <h1>${ev.nom}</h1>
+        <div class="ev-date-display">
+          <span>📅 ${d}</span>
+          ${ev.heure?'<span>🕐 '+ev.heure+'</span>':''}
+          ${ev.pax?'<span>👥 '+ev.pax+' participants</span>':''}
+          ${ev.client?'<span>🏢 '+ev.client+'</span>':''}
+        </div>
+      </div>
+      <div class="ev-actions">
+        <button class="btn-icon" onclick="openModal('${ev.id}')" title="Modifier">✏️</button>
+        <button class="btn-icon danger" onclick="deleteEvent('${ev.id}')" title="Supprimer">🗑️</button>
+      </div>
+    </div>
+    ${venueHtml}
+    <div class="ev-section" id="${wid}">
+      <div class="ev-section-hdr"><span class="sec-icon">🌤</span><h3>Météo prévue</h3><span class="sec-badge badge badge-weather">Open-Meteo</span></div>
+      <div class="ev-section-body"><div class="weather-loading"><span class="spin"></span> Chargement…</div></div>
+    </div>
+    ${trajetHtml}
+    ${notesHtml}`;
+
+  loadWeather(ev,wid);
+}
+
+// ── WEATHER ──
+const WI={0:'☀️',1:'🌤',2:'⛅',3:'☁️',45:'🌫',48:'🌫',51:'🌦',53:'🌦',55:'🌧',61:'🌧',63:'🌧',65:'🌧',71:'🌨',73:'🌨',75:'❄️',80:'🌦',81:'🌧',82:'⛈',95:'⛈',96:'⛈',99:'⛈'};
+const WL={0:'Ciel dégagé',1:'Peu nuageux',2:'Partiellement nuageux',3:'Couvert',45:'Brouillard',48:'Brouillard givrant',51:'Bruine légère',53:'Bruine modérée',55:'Bruine dense',61:'Pluie faible',63:'Pluie modérée',65:'Pluie forte',71:'Neige légère',73:'Neige modérée',75:'Neige forte',80:'Averses faibles',81:'Averses modérées',82:'Violentes averses',95:'Orage',96:'Orage avec grêle',99:'Orage violent'};
+
+async function loadWeather(ev,wid){
+  const sec=document.getElementById(wid);
+  if(!sec)return;
+  const body=sec.querySelector('.ev-section-body');
+  let lat=ev.lat?parseFloat(ev.lat):null;
+  let lng=ev.lng?parseFloat(ev.lng):null;
+  if((!lat||!lng)&&ev.lieu){
+    try{
+      const r=await fetch('https://nominatim.openstreetmap.org/search?q='+encodeURIComponent(ev.lieu)+'&format=json&limit=1',{headers:{'Accept-Language':'fr'}});
+      const j=await r.json();
+      if(j&&j[0]){lat=parseFloat(j[0].lat);lng=parseFloat(j[0].lon);}
+    }catch(e){}
+  }
+  if(!lat||!lng){body.innerHTML='<div class="weather-unavail">Impossible de géolocaliser le lieu. Renseignez une adresse précise.</div>';return;}
+  if(!ev.date){body.innerHTML='<div class="weather-unavail">Ajoutez une date pour afficher la météo.</div>';return;}
+  try{
+    const url='https://api.open-meteo.com/v1/forecast?latitude='+lat+'&longitude='+lng+'&daily=weathercode,temperature_2m_max,temperature_2m_min,precipitation_sum,windspeed_10m_max,precipitation_probability_max&timezone=Europe%2FParis&forecast_days=16&start_date='+ev.date+'&end_date='+ev.date;
+    const r=await fetch(url);
+    if(!r.ok)throw new Error();
+    const d=await r.json();
+    if(!d.daily||!d.daily.time||!d.daily.time.length){
+      body.innerHTML='<div class="weather-unavail">Météo non disponible pour cette date (horizon max : 16 jours).</div>';return;
+    }
+    const c=d.daily.weathercode[0],tmax=d.daily.temperature_2m_max[0],tmin=d.daily.temperature_2m_min[0];
+    const precip=d.daily.precipitation_sum[0],wind=d.daily.windspeed_10m_max[0],rain=d.daily.precipitation_probability_max[0];
+    body.innerHTML=`
+      <div class="weather-box">
+        <div class="w-icon">${WI[c]||'🌡'}</div>
+        <div>
+          <div class="w-temp">${Math.round(tmax)}°C</div>
+          <div class="w-desc">${WL[c]||'—'}</div>
+          <div class="w-grid">
+            <div class="w-item">🌡 Min <strong>${Math.round(tmin)}°C</strong></div>
+            <div class="w-item">💧 Précip. <strong>${precip??0} mm</strong></div>
+            <div class="w-item">🌧 Prob. pluie <strong>${rain??'—'}%</strong></div>
+            <div class="w-item">💨 Vent <strong>${wind??'—'} km/h</strong></div>
+          </div>
+        </div>
+      </div>
+      <div style="margin-top:12px;font-size:11px;color:var(--muted2)">📍 ${ev.lieu||'Lieu de l\'événement'}${ev.heure?' à '+ev.heure:''} · Source : Open-Meteo</div>`;
+  }catch(e){
+    body.innerHTML='<div class="weather-unavail">Météo temporairement indisponible.</div>';
+  }
+}
+
+// ── TOAST ──
+let toastTimer=null;
+function showToast(msg,type=''){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.className='toast show'+(type?' '+type:'');
+  clearTimeout(toastTimer);toastTimer=setTimeout(()=>t.classList.remove('show'),2800);
+}
+
+// ── INIT ──
+renderList();
+
+// ════════════════════════════════════════
+// LAB EVENT CONNECTOR
+// ════════════════════════════════════════
+const LE_BASE='https://2isd.lab-event.com';
+const LE_DEPART='171 avenue des longues pièces, 62331 Coquelles';
+let leEvents=[];
+let leActiveId=null;
+
+// Restore saved token
+(function(){
+  const t=localStorage.getItem('2isd_le_token');
+  if(t){document.getElementById('leToken').value=t;}
+})();
+
+async function leApiFetch(path,params={}){
+  const token=document.getElementById('leToken').value.trim();
+  if(!token)throw new Error('Token manquant');
+  const url=new URL(LE_BASE+path);
+  Object.entries(params).forEach(([k,v])=>v!==undefined&&v!==''&&url.searchParams.set(k,v));
+  const r=await fetch(url.toString(),{
+    headers:{'Authorization':'Bearer '+token,'Accept':'application/json','Content-Type':'application/json'}
+  });
+  if(!r.ok){const e=await r.text();throw new Error('API '+r.status+': '+e.slice(0,120));}
+  return r.json();
+}
+
+async function leConnect(){
+  const btn=document.getElementById('leConnBtn');
+  const dot=document.getElementById('leConnDot');
+  const label=document.getElementById('leConnLabel');
+  btn.disabled=true;btn.textContent='…';
+  try{
+    // Set default dates: today → today + 90 days
+    const today=new Date();
+    const future=new Date();future.setDate(today.getDate()+90);
+    const fmt=d=>d.toISOString().slice(0,10);
+    document.getElementById('leStart').value=fmt(today);
+    document.getElementById('leEnd').value=fmt(future);
+    await leLoad();
+    localStorage.setItem('2isd_le_token',document.getElementById('leToken').value.trim());
+    dot.className='conn-dot ok';label.textContent='Connecté';
+    document.getElementById('leFilters').style.display='flex';
+    document.getElementById('leImportBtn').style.display='';
+    showToast('Connexion Lab Event réussie ✓','success');
+  }catch(e){
+    dot.className='conn-dot err';label.textContent='Erreur';
+    showToast('Erreur : '+e.message,'error');
+  }finally{btn.disabled=false;btn.textContent='Connecter';}
+}
+
+async function leLoad(){
+  document.getElementById('leList').innerHTML='<div class="ev-empty"><span class="spin"></span><p style="margin-top:12px">Chargement…</p></div>';
+  const start=document.getElementById('leStart').value;
+  const end=document.getElementById('leEnd').value;
+  try{
+    const data=await leApiFetch('/api/v3/events/listing',{
+      withProducts:true,asTree:true,
+      startDate:start||undefined,endDate:end||undefined
+    });
+    leEvents=Array.isArray(data)?data:(data.data||data.events||[]);
+    leRenderList();
+  }catch(e){
+    document.getElementById('leList').innerHTML='<div class="ev-empty" style="color:var(--red)">❌ '+e.message+'</div>';
+  }
+}
+
+function leRenderList(){
+  const list=document.getElementById('leList');
+  if(!leEvents.length){
+    list.innerHTML='<div class="ev-empty"><div class="ev-empty-icon">📭</div><p>Aucun événement trouvé sur cette période.</p></div>';
+    return;
+  }
+  const sorted=[...leEvents].sort((a,b)=>new Date(a.date_from||a.start_date||0)-new Date(b.date_from||b.start_date||0));
+  list.innerHTML=sorted.map(ev=>{
+    const rawDate=ev.date_from||ev.start_date||ev.date||'';
+    const d=rawDate?new Date(rawDate).toLocaleDateString('fr-FR',{day:'2-digit',month:'short',year:'numeric'}):'—';
+    const name=ev.event_name||ev.name||ev.title||'Sans nom';
+    const client=ev.client_name||ev.client||ev.society||'';
+    const products=ev.products||[];
+    const isRef=leCheckVenueRef(ev);
+    return`<div class="le-item${ev.id===leActiveId?' active':''}" onclick="leShowDetail(${ev.id})">
+      <div class="le-item-date">${d}</div>
+      <div class="le-item-name">${name}</div>
+      <div class="le-item-meta">${[client,products.length?products.length+' produit(s)':''].filter(Boolean).join(' · ')}</div>
+      <div class="le-item-tags">
+        <span class="badge badge-crm">CRM</span>
+        ${isRef?'<span class="badge badge-venue">✅ Réceptif</span>':''}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function leCheckVenueRef(ev){
+  const lieux=[
+    ev.venue?.name||'',ev.venue?.address||'',
+    ev.location||'',ev.place||'',
+    ...(ev.products||[]).map(p=>p.venue?.name||p.location||'')
+  ].join(' ').toLowerCase();
+  return VENUES.some(v=>lieux.includes(v.name.toLowerCase().slice(0,8)));
+}
+
+async function leShowDetail(id){
+  leActiveId=id;
+  leRenderList();
+  const ev=leEvents.find(e=>e.id===id);
+  if(!ev)return;
+
+  const detail=document.getElementById('leDetail');
+  detail.innerHTML='<div class="le-detail-empty"><span class="spin" style="width:24px;height:24px;border-width:3px"></span><p style="margin-top:14px">Génération du planning…</p></div>';
+
+  // Fetch locations for this event
+  let locations=[];
+  try{
+    const locData=await leApiFetch('/api/v3/events/locations/'+id);
+    locations=locData._payload||locData.data||locData||[];
+  }catch(e){/* optional */}
+
+  const name=ev.event_name||ev.name||ev.title||'Sans nom';
+  const rawDate=ev.date_from||ev.start_date||ev.date||'';
+  const dateEnd=ev.date_to||ev.end_date||'';
+  const d=rawDate?new Date(rawDate).toLocaleDateString('fr-FR',{weekday:'long',day:'2-digit',month:'long',year:'numeric'}):'—';
+  const client=ev.client_name||ev.client||ev.society||'—';
+  const products=ev.products||[];
+
+  // Determine main venue
+  const mainLoc=locations[0]||{};
+  const lieuName=mainLoc.name||ev.venue?.name||ev.location||'';
+  const lieuAddr=mainLoc.address||ev.venue?.address||'';
+  const lieuLat=mainLoc.latitude||ev.venue?.latitude||null;
+  const lieuLng=mainLoc.longitude||ev.venue?.longitude||null;
+
+  // Check référencé
+  const matchedVenue=VENUES.find(v=>{
+    const test=(lieuName+' '+lieuAddr).toLowerCase();
+    return test.includes(v.name.toLowerCase().slice(0,8));
+  });
+
+  // Build planning from products
+  const planning=leGeneratePlanning(ev,products,rawDate);
+
+  // Render venue badge
+  const venueBadgeHtml=matchedVenue?`
+    <div class="venue-alert" style="margin-top:12px">
+      <div class="alert-icon">✅</div>
+      <div class="alert-body">
+        <div class="alert-title">Lieu référencé 2ISD — ${matchedVenue.name}</div>
+        <div class="alert-sub">${lieuAddr||matchedVenue.address}</div>
+        <a href="${matchedVenue.url}" target="_blank" class="btn-guide">🧭 Voir le guide réceptif ↗</a>
+      </div>
+    </div>`:'';
+
+  // Render products list
+  const prodsHtml=products.length?`
+    <div class="ev-section" style="margin-bottom:16px">
+      <div class="ev-section-hdr"><span class="sec-icon">📦</span><h3>Produits / Prestations</h3><span class="sec-badge badge badge-crm">${products.length} produit(s)</span></div>
+      <div class="ev-section-body" style="padding:8px 18px">
+        ${products.map(p=>{
+          const pname=p.name||p.product_name||p.title||'—';
+          const ptype=p.type||p.category||'';
+          const ptime=p.start_time||p.time_from||'';
+          const pmatch=VENUES.find(v=>(pname+' '+(p.location||'')).toLowerCase().includes(v.name.toLowerCase().slice(0,8)));
+          return`<div class="prod-row">
+            <div class="prod-name">${pname}${ptype?` <span style="color:var(--muted2);font-size:11px">(${ptype})</span>`:''}</div>
+            ${ptime?`<div class="prod-time time-chip">${ptime}</div>`:''}
+            ${pmatch?`<a href="${pmatch.url}" target="_blank" class="venue-ref-chip">✅ ${pmatch.name}</a>`:''}
+          </div>`;
+        }).join('')}
+      </div>
+    </div>`:'';
+
+  // Planning table
+  const planningHtml=`
+    <div class="ev-section" style="margin-bottom:16px">
+      <div class="ev-section-hdr"><span class="sec-icon">⏱</span><h3>Planning Généré</h3><span class="sec-badge badge" style="background:var(--yellow-bg);color:var(--yellow)">Auto</span></div>
+      <div class="ev-section-body" style="padding:0">
+        <table class="planning-table">
+          <thead><tr><th>Étape</th><th>Heure</th><th>Détail</th></tr></thead>
+          <tbody>
+            ${planning.map(row=>`<tr>
+              <td>${row.label}</td>
+              <td>${row.time?`<span class="time-chip${row.derived?' derived':''}">${row.time}</span>`:'-'}</td>
+              <td style="font-size:12px">${row.detail||''}</td>
+            </tr>`).join('')}
+          </tbody>
+        </table>
+      </div>
+    </div>`;
+
+  // Weather section id
+  const wid='lew_'+id;
+
+  detail.innerHTML=`
+    <div class="ev-hdr-row">
+      <div class="ev-hdr-left">
+        <h1>${name}</h1>
+        <div class="ev-date-display">
+          <span>📅 ${d}</span>
+          ${client!=='—'?`<span>🏢 ${client}</span>`:''}
+          ${products.length?`<span>📦 ${products.length} produit(s)</span>`:''}
+        </div>
+      </div>
+      <div class="ev-actions">
+        <button class="btn-icon" onclick="leImportOne(${id})" title="Importer dans Événements" style="color:var(--yellow)">⬇️</button>
+      </div>
+    </div>
+
+    <div class="ev-section" style="margin-bottom:16px">
+      <div class="ev-section-hdr"><span class="sec-icon">📍</span><h3>Lieu de prestation</h3></div>
+      <div class="ev-section-body">
+        <div style="font-size:13px;margin-bottom:4px"><strong>${lieuName||'Non renseigné'}</strong></div>
+        ${lieuAddr?`<div style="font-size:12px;color:var(--muted)">${lieuAddr}</div>`:''}
+        <div style="font-size:12px;color:var(--muted2);margin-top:8px">🚗 Départ : ${LE_DEPART}</div>
+        ${venueBadgeHtml}
+      </div>
+    </div>
+
+    ${prodsHtml}
+    ${planningHtml}
+
+    <div class="ev-section" id="${wid}" style="margin-bottom:16px">
+      <div class="ev-section-hdr"><span class="sec-icon">🌤</span><h3>Météo prévue</h3><span class="sec-badge badge badge-weather">Open-Meteo</span></div>
+      <div class="ev-section-body"><div class="weather-loading"><span class="spin"></span> Chargement…</div></div>
+    </div>
+
+    <div class="ev-section" style="margin-bottom:16px">
+      <div class="ev-section-hdr"><span class="sec-icon">🗺️</span><h3>Configurateurs</h3></div>
+      <div class="ev-section-body" style="display:flex;flex-wrap:wrap;gap:10px">
+        <a class="embed-link" href="calculateur_trajets_v13.html" target="_blank">🗺️ Planificateur de trajet ↗</a>
+        <a class="embed-link" href="préconisation_activité_v15.html" target="_blank">⚙️ Configurateur d'activités ↗</a>
+      </div>
+      <div style="padding:0 18px 14px;font-size:12px;color:var(--muted2)">Départ : <strong style="color:var(--muted)">${LE_DEPART}</strong> → <strong style="color:var(--muted)">${lieuAddr||lieuName||'Lieu à définir'}</strong></div>
+    </div>`;
+
+  // Load weather
+  const fakeEv={date:rawDate?rawDate.slice(0,10):'',heure:planning.find(p=>p.label.includes('Prestation'))?.time||'',lieu:lieuAddr||lieuName,lat:lieuLat,lng:lieuLng};
+  loadWeather(fakeEv,wid);
+}
+
+function leGeneratePlanning(ev,products,rawDate){
+  const rows=[];
+  // Find first product start time as "heure prestation"
+  const firstProd=products.find(p=>p.start_time||p.time_from);
+  const heurePrestation=firstProd?.(firstProd.start_time||firstProd.time_from)||'';
+  const heureDisplay=heurePrestation||ev.start_time||ev.time_from||'';
+
+  // Calculate departure time (prestation - 2h travel estimate)
+  let heureDepart='';
+  if(heureDisplay){
+    try{
+      const [h,m]=(heureDisplay.match(/\d+:\d+/)||[''])[0].split(':').map(Number);
+      if(!isNaN(h)){
+        const total=h*60+(m||0)-120; // -2h
+        const hd=Math.floor(total/60);const md=total%60;
+        heureDepart=(hd<0?'—':(hd<10?'0':'')+hd+':'+(md<10?'0':'')+md);
+      }
+    }catch(e){}
+  }
+
+  rows.push({label:'🚗 Départ Coquelles',time:heureDepart||'—',detail:LE_DEPART,derived:!!heureDepart});
+  rows.push({label:'📍 Arrivée sur site',time:heureDisplay?(()=>{
+    try{const [h,m]=(heureDisplay.match(/\d+:\d+/)||[''])[0].split(':').map(Number);const t=h*60+(m||0)-30;const hh=Math.floor(t/60);const mm=t%60;return(hh<10?'0':'')+hh+':'+(mm<10?'0':'')+mm;}catch(e){return'';}
+  })():'—',detail:'Installation & préparation',derived:true});
+  rows.push({label:'⭐ Prestation',time:heureDisplay||'—',detail:products.map(p=>p.name||p.product_name||'').filter(Boolean).join(', ')||'—',derived:false});
+
+  // Add individual products
+  products.forEach((p,i)=>{
+    const pt=p.start_time||p.time_from||'';
+    const pname=p.name||p.product_name||p.title||'Produit '+(i+1);
+    const pdur=p.duration||p.duration_minutes||'';
+    rows.push({label:`  └ ${pname}`,time:pt||'',detail:pdur?`Durée : ${pdur} min`:'',derived:false});
+  });
+
+  // End time
+  const lastProd=products.slice(-1)[0];
+  const endTime=lastProd?.end_time||lastProd?.time_to||ev.end_time||ev.time_to||'';
+  if(endTime)rows.push({label:'🏁 Fin de prestation',time:endTime,detail:'Retour vers Coquelles',derived:false});
+
+  return rows;
+}
+
+async function leImportOne(id){
+  const ev=leEvents.find(e=>e.id===id);
+  if(!ev)return;
+  let locations=[];
+  try{const ld=await leApiFetch('/api/v3/events/locations/'+id);locations=ld._payload||ld.data||ld||[];}catch(e){}
+  const mainLoc=locations[0]||{};
+  const nom=ev.event_name||ev.name||ev.title||'Sans nom';
+  const rawDate=ev.date_from||ev.start_date||ev.date||'';
+  const heurePrestation=(ev.products||[]).find(p=>p.start_time)?.start_time||ev.start_time||'09:00';
+  const lieuName=mainLoc.name||ev.venue?.name||ev.location||'';
+  const lieuAddr=mainLoc.address||ev.venue?.address||'';
+  const lieuDisplay=[lieuName,lieuAddr].filter(Boolean).join(' — ');
+  const matchedVenue=VENUES.find(v=>(lieuName+' '+lieuAddr).toLowerCase().includes(v.name.toLowerCase().slice(0,8)));
+  const newEv={
+    id:'ev_'+Date.now(),
+    nom,
+    date:rawDate?rawDate.slice(0,10):'',
+    heure:heurePrestation?heurePrestation.slice(0,5):'',
+    pax:ev.attendees||ev.pax||'',
+    client:ev.client_name||ev.client||ev.society||'',
+    lieu:lieuDisplay,
+    depart:LE_DEPART,
+    type:ev.type||ev.category||'',
+    notes:'Importé depuis Lab Event (ID: '+id+')',
+    venueRef:matchedVenue?matchedVenue.name:'',
+    venueUrl:matchedVenue?matchedVenue.url:'',
+    lat:mainLoc.latitude||ev.venue?.latitude||'',
+    lng:mainLoc.longitude||ev.venue?.longitude||'',
+    createdAt:Date.now(),
+  };
+  events.unshift(newEv);
+  saveEvents(events);
+  renderList();
+  showToast('✓ "'+nom+'" importé dans Événements','success');
+}
+
+async function leImportAll(){
+  let count=0;
+  for(const ev of leEvents){
+    const existing=events.find(e=>e.notes&&e.notes.includes('ID: '+ev.id));
+    if(!existing){await leImportOne(ev.id);count++;}
+  }
+  showToast(count+' événement(s) importé(s) ✓','success');
+}
+</script>
 </body>
 </html>
