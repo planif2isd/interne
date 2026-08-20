@@ -931,7 +931,7 @@ async function leShowDetail(id){
   const dateEnd=ev.date_to||ev.end_date||'';
   const d=rawDate?new Date(rawDate).toLocaleDateString('fr-FR',{weekday:'long',day:'2-digit',month:'long',year:'numeric'}):'—';
   const client=esc(ev.client_name||ev.client||ev.society||'—');
-  const products=ev.products||[];
+  const products=(ev.products&&ev.products.length?ev.products:(ev.children||[]));
 
   // Determine main venue
   const mainLoc=locations[0]||{};
@@ -989,7 +989,11 @@ async function leShowDetail(id){
           <tbody>
             ${planning.map(row=>`<tr>
               <td>${row.label}</td>
-              <td>${row.time?`<span class="time-chip${row.derived?' derived':''}">${row.time}</span>`:'-'}</td>
+              <td style="white-space:nowrap">
+                ${row.time?`<span class="time-chip${row.derived?' derived':''}">${row.time}</span>`:''}
+                ${row.timeEnd?`<span style="color:var(--muted);font-size:11px"> → </span><span class="time-chip${row.derived?' derived':''}">${row.timeEnd}</span>`:''}
+                ${!row.time&&!row.timeEnd?'—':''}
+              </td>
               <td style="font-size:12px">${row.detail||''}</td>
             </tr>`).join('')}
           </tbody>
@@ -1050,46 +1054,93 @@ async function leShowDetail(id){
 
 function leGeneratePlanning(ev,products,rawDate){
   const rows=[];
-  // Find first product start time as "heure prestation"
-  const firstProd=products.find(p=>p.start_time||p.time_from);
-  const heurePrestation=firstProd?.(firstProd.start_time||firstProd.time_from)||'';
-  const heureDisplay=heurePrestation||ev.start_time||ev.time_from||'';
 
-  // Calculate departure time (prestation - 2h travel estimate)
-  let heureDepart='';
-  if(heureDisplay){
-    try{
-      const [h,m]=(heureDisplay.match(/\d+:\d+/)||[''])[0].split(':').map(Number);
-      if(!isNaN(h)){
-        const total=h*60+(m||0)-120; // -2h
-        const hd=Math.floor(total/60);const md=total%60;
-        heureDepart=(hd<0?'—':(hd<10?'0':'')+hd+':'+(md<10?'0':'')+md);
-      }
-    }catch(e){}
+  // Extraire heure depuis datetime Lab Event (ex: "2026-08-26 15:45:00")
+  function extractTime(dt){
+    if(!dt)return'';
+    // Format "YYYY-MM-DD HH:MM:SS" ou "YYYY-MM-DDTHH:MM:SS"
+    const m=String(dt).match(/[T ](\d{2}:\d{2})/);
+    return m?m[1]:'';
   }
 
-  rows.push({label:'🚗 Départ Coquelles',time:heureDepart||'—',detail:LE_DEPART,derived:!!heureDepart});
-  rows.push({label:'📍 Arrivée sur site',time:heureDisplay?(()=>{
-    try{const [h,m]=(heureDisplay.match(/\d+:\d+/)||[''])[0].split(':').map(Number);const t=h*60+(m||0)-30;const hh=Math.floor(t/60);const mm=t%60;return(hh<10?'0':'')+hh+':'+(mm<10?'0':'')+mm;}catch(e){return'';}
-  })():'—',detail:'Installation & préparation',derived:true});
-  rows.push({label:'⭐ Prestation',time:heureDisplay||'—',detail:products.map(p=>p.name||p.product_name||'').filter(Boolean).join(', ')||'—',derived:false});
+  // Soustraire N minutes d'une heure "HH:MM"
+  function subMinutes(hhmm,mins){
+    if(!hhmm||hhmm==='—')return'—';
+    const [h,m]=hhmm.split(':').map(Number);
+    const total=h*60+m-mins;
+    if(total<0)return'—';
+    const hh=Math.floor(total/60),mm=total%60;
+    return(hh<10?'0':'')+hh+':'+(mm<10?'0':'')+mm;
+  }
 
-  // Add individual products
-  products.forEach((p,i)=>{
-    const pt=p.start_time||p.time_from||'';
-    const pname=p.name||p.product_name||p.title||'Produit '+(i+1);
-    const pdur=p.duration||p.duration_minutes||'';
-    rows.push({label:`  └ ${pname}`,time:pt||'',detail:pdur?`Durée : ${pdur} min`:'',derived:false});
+  // Les produits sont dans ev.children selon la structure Lab Event asTree
+  const prods=products.length?products:(ev.children||[]);
+
+  // Heure de la première prestation = start_date du premier produit
+  const firstProd=prods[0]||{};
+  const heurePrestation=extractTime(firstProd.start_date||firstProd.startDate||firstProd.start_time||ev.start_date||ev.date_from||'');
+  const heureDepart=subMinutes(heurePrestation,120); // -2h
+  const heureArrivee=subMinutes(heurePrestation,30); // -30min
+
+  // Heure de fin = end_date du dernier produit
+  const lastProd=prods[prods.length-1]||{};
+  const heureFin=extractTime(lastProd.end_date||lastProd.endDate||lastProd.end_time||ev.end_date||ev.date_to||'');
+
+  rows.push({
+    label:'🚗 Départ Coquelles',
+    time:heureDepart,
+    detail:LE_DEPART,
+    derived:true
+  });
+  rows.push({
+    label:'📍 Arrivée sur site',
+    time:heureArrivee,
+    detail:'Installation & préparation',
+    derived:true
+  });
+  rows.push({
+    label:'⭐ Début de prestation',
+    time:heurePrestation||'—',
+    detail:prods.map(p=>esc(p.name||p.product_name||'')).filter(Boolean).join(', ')||'—',
+    derived:false
   });
 
-  // End time
-  const lastProd=products.slice(-1)[0];
-  const endTime=lastProd?.end_time||lastProd?.time_to||ev.end_time||ev.time_to||'';
-  if(endTime)rows.push({label:'🏁 Fin de prestation',time:endTime,detail:'Retour vers Coquelles',derived:false});
+  // Détail de chaque produit
+  prods.forEach((p,i)=>{
+    const pname=p.name||p.product_name||p.title||'Produit '+(i+1);
+    const pstart=extractTime(p.start_date||p.startDate||p.start_time||'');
+    const pend=extractTime(p.end_date||p.endDate||p.end_time||'');
+    const pdur=p.duration?Math.round(p.duration*60)+' min':'';
+    rows.push({
+      label:'  └ '+esc(pname),
+      time:pstart,
+      timeEnd:pend,
+      detail:pdur?'Durée : '+pdur:'',
+      derived:false
+    });
+  });
+
+  if(heureFin){
+    rows.push({
+      label:'🏁 Fin de prestation',
+      time:heureFin,
+      detail:'Retour vers Coquelles',
+      derived:false
+    });
+    // Ajouter 2h au lieu de fin pour estimer retour
+    const finParts=heureFin.split(':').map(Number);
+    const retourTotal=finParts[0]*60+(finParts[1]||0)+120;
+    const heureRetour=retourTotal<1440?(Math.floor(retourTotal/60)<10?'0':'')+Math.floor(retourTotal/60)+':'+(retourTotal%60<10?'0':'')+retourTotal%60:'';
+    rows.push({
+      label:'🏠 Retour Coquelles (estimé)',
+      time:heureRetour==='—'?'':heureRetour,
+      detail:'Trajet retour ~2h depuis le lieu',
+      derived:true
+    });
+  }
 
   return rows;
 }
-
 async function leImportOne(id){
   const ev=leEvents.find(e=>String(e.id)===String(id));
   if(!ev)return;
